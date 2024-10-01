@@ -41,28 +41,31 @@ public class TokenProvider {
         header.put("typ", "JWT");
 
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 30); // 30분
+        Date accessTokenExpireAt = new Date(now + 1000 * 60 * 30); // 30분
         String accessToken = Jwts.builder()
                 .header().add(header).and()
                 .subject(authentication.getName())
                 .claim("auth", authorities)
-                .expiration(accessTokenExpiresIn)
+                .expiration(accessTokenExpireAt)
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
 
         // Refresh Token 생성
+        Date refreshTokenExpireAt = new Date(now + 1000 * 60 * 60 * 24); // 24시간
         String refreshToken = Jwts.builder()
                 .header().add(header).and()
                 .subject(authentication.getName())
                 .claim("auth", authorities)
-                .expiration(accessTokenExpiresIn)
+                .expiration(refreshTokenExpireAt)
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
 
         return TokenResponse.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
-//                .refreshToken(refreshToken)
+                .accessTokenExpireAt(accessTokenExpireAt)
+                .refreshToken(refreshToken)
+                .refreshTokenExpireAt(refreshTokenExpireAt)
                 .build();
     }
 
