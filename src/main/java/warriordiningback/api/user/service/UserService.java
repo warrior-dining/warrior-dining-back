@@ -47,13 +47,22 @@ public class UserService {
 
     @Transactional
     public User signUp(String email, String password, String name, String birth, String phone, Long gender) {
-        Code code = codeRepository.findById(gender).orElseThrow(() -> new RuntimeException("성별에 대한 정보가 존재하지않습니다."));
+        validateUser(email);
+        Code code = codeRepository.findById(gender).orElseThrow(
+                () -> new RuntimeException("성별에 대한 정보가 존재하지않습니다."));
         User savedUser = User.create(email, password, name, birth, phone, code);
 
-        Role defaultRole = roleRepository.findById(1L).orElseThrow(() -> new RuntimeException("권한에 대한 정보가 존재하지않습니다."));
+        Role defaultRole = roleRepository.findById(1L).orElseThrow(
+                () -> new RuntimeException("권한에 대한 정보가 존재하지않습니다."));
         savedUser.getRoles().add(defaultRole);
 
         return userRepository.save(savedUser);
+    }
+
+    public void validateUser(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalStateException("이미 가입된 이메일이 존재합니다.");
+        }
     }
 
 }
