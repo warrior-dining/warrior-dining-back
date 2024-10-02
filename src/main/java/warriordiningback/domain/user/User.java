@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import warriordiningback.domain.BaseEntity;
 import warriordiningback.domain.Code;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -18,19 +18,19 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 50)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String birth;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String phone;
 
     @Column(name = "is_used")
@@ -44,7 +44,21 @@ public class User extends BaseEntity implements UserDetails {
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
+
+    /* 비즈니스 로직 */
+    public static User create(String email, String password, String name, String birth, String phone, Code gender) {
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.name = name;
+        user.birth = birth;
+        user.phone = phone;
+        user.isUsed = true;
+        user.code = gender;
+        return user;
+    }
+    /* ========== */
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
