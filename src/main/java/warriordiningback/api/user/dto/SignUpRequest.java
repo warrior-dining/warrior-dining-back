@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserRequest {
+public class SignUpRequest {
 
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
     @NotBlank(message = "이메일을 입력하세요.")
