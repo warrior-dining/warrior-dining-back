@@ -11,6 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import warriordiningback.exception.DiningApplicationException;
+import warriordiningback.exception.ErrorCode;
 import warriordiningback.token.response.TokenResponse;
 
 import javax.crypto.SecretKey;
@@ -75,7 +77,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 존재하지 않습니다.");
+            throw new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND);
         }
 
         // 클레임에서 권한 정보 가져오기

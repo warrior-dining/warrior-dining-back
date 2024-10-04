@@ -6,7 +6,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +16,8 @@ import warriordiningback.domain.user.Role;
 import warriordiningback.domain.user.RoleRepository;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
+import warriordiningback.exception.DiningApplicationException;
+import warriordiningback.exception.ErrorCode;
 import warriordiningback.token.TokenProvider;
 import warriordiningback.token.response.TokenResponse;
 import warriordiningback.token.service.CustomUserDetailsService;
@@ -38,9 +39,9 @@ public class UserService {
 
     public TokenResponse signIn(SignInRequest signInRequest) {
         User user = userRepository.findByEmail(signInRequest.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("아이디 또는 비밀번호를 확인하세요.");
+            throw new DiningApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
         // 1. email + password를 기반으로 Authentication 객체 생성
@@ -62,13 +63,13 @@ public class UserService {
     public User signUp(String email, String password, String name, String birth, String phone, Long gender) {
         validateUser(email);
         Code code = codeRepository.findById(gender).orElseThrow(
-                () -> new RuntimeException("성별에 대한 정보가 존재하지않습니다."));
+                () -> new DiningApplicationException(ErrorCode.GENDER_INFO_NOT_FOUND));
 
         String encodedPassword = passwordEncoder.encode(password);
         User savedUser = User.create(email, encodedPassword, name, birth, phone, code);
 
         Role defaultRole = roleRepository.findById(1L).orElseThrow(
-                () -> new RuntimeException("권한에 대한 정보가 존재하지않습니다."));
+                () -> new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND));
         savedUser.getRoles().add(defaultRole);
 
         return userRepository.save(savedUser);
@@ -76,7 +77,7 @@ public class UserService {
 
     public void validateUser(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalStateException("이미 가입된 이메일이 존재합니다.");
+            throw new DiningApplicationException(ErrorCode.DUPLICATED_USER_ID);
         }
     }
 
