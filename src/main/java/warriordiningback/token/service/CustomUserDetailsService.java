@@ -6,10 +6,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
+import warriordiningback.exception.DiningApplicationException;
+import warriordiningback.exception.ErrorCode;
 
 import java.util.stream.Collectors;
 
@@ -19,13 +20,12 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
     }
 
     // 해당하는 User의 데이터가 존재한다면 UserDetails 객체로 만들어서 return
