@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .password(user.getPassword())
                 .authorities(user.getRoles().stream()
                         .map(roles -> new SimpleGrantedAuthority(roles.getRole()))
                         .collect(Collectors.toList()))
