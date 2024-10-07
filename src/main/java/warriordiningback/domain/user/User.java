@@ -38,7 +38,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "code_id", nullable = false)
-    private Code code;
+    private Code gender;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
@@ -55,7 +55,7 @@ public class User extends BaseEntity implements UserDetails {
         user.birth = birth;
         user.phone = phone;
         user.isUsed = true;
-        user.code = gender;
+        user.gender = gender;
         return user;
     }
     /* ========== */
