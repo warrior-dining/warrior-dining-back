@@ -13,7 +13,7 @@ import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceMenu;
 import warriordiningback.domain.place.PlaceMenuRepository;
-import warriordiningback.domain.place.PlacesRepository;
+import warriordiningback.domain.place.PlaceRepository;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
 
@@ -24,12 +24,12 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class AdminPlacesServiceImp implements AdminPlaceService {
+public class AdminPlaceServiceImp implements AdminPlaceService {
 
 
 
     @Autowired
-    private PlacesRepository placesRepository;
+    private PlaceRepository placeRepository;
 
     @Autowired
     private PlaceMenuRepository placeMenuRepository;
@@ -47,7 +47,7 @@ public class AdminPlacesServiceImp implements AdminPlaceService {
     public Map<String, Object> placeList() {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", true);
-        resultMap.put("results", placesRepository.findAll());
+        resultMap.put("results", placeRepository.findAll());
         resultMap.put("message", "success");
         return resultMap;
     }
@@ -56,7 +56,7 @@ public class AdminPlacesServiceImp implements AdminPlaceService {
     public Map<String, Object> placeInfo(Long placeId) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", true);
-        resultMap.put("results", placesRepository.findById(placeId).orElseThrow(()->new RuntimeException("그런 아이디 없다.")));
+        resultMap.put("results", placeRepository.findById(placeId).orElseThrow(()->new RuntimeException("그런 아이디 없다.")));
         resultMap.put("message", "success");
         return resultMap;
     }
@@ -90,7 +90,7 @@ public class AdminPlacesServiceImp implements AdminPlaceService {
                 placeInfo.get("endtime").toString(),
                 placeInfo.get("offday").toString(),
                 placeInfo.get("description").toString());
-        place = placesRepository.save(place);
+        place = placeRepository.save(place);
         log.info("========== 음식점 정보 저장 로직 끝 ============");
 
         /* Menu 테이블에 인서트 하는 로직 */
@@ -108,7 +108,7 @@ public class AdminPlacesServiceImp implements AdminPlaceService {
         adminFileService.fileUpload(files, place);
         log.info("========== 음식점 사진 정보 저장 로직 끝 =============");
 
-        Place resPlace = placesRepository.findById(place.getId()).orElseThrow(()-> new RuntimeException("그런 아이디 없다."));
+        Place resPlace = placeRepository.findById(place.getId()).orElseThrow(()-> new RuntimeException("그런 아이디 없다."));
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", true);
         resultMap.put("results", resPlace);
