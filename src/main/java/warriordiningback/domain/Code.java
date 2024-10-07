@@ -22,7 +22,7 @@ public class Code {
     @Column(length = 100)
     private String comment;
 
-    @OneToMany(mappedBy = "code")
+    @OneToMany(mappedBy = "gender")
     private List<User> users = new ArrayList<>();
 
 }
