@@ -9,7 +9,10 @@ import warriordiningback.domain.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
+@Getter
 @Table(name = "codes")
 @Getter
 @NoArgsConstructor
