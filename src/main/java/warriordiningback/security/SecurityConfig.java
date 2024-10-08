@@ -37,9 +37,9 @@ public class SecurityConfig { // 스프링 시큐리티 필터
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/user/signin").permitAll()/*hasRole("('ROLE_USER') or ('ROLE_ADMIN') or ('ROLE_OWNER')")*/
-                        .requestMatchers("/api/user/test").permitAll()/*hasAnyAuthority("USER", "ADMIN", "OWNER")*/
-                        .requestMatchers("/api/owner/**").permitAll()/*hasAnyAuthority("ADMIN", "OWNER")*/
-                        .requestMatchers("/api/admin/**").permitAll()/*.hasAuthority("ADMIN")*/
+                        .requestMatchers("/api/user/test").permitAll()/*.hasAnyAuthority("USER", "ADMIN", "OWNER")*/
+						.requestMatchers("/api/owner/**").permitAll()/* .hasAnyAuthority("ADMIN", "OWNER") */
+						.requestMatchers("/api/admin/**").permitAll()/* .hasAuthority("ADMIN") */
                         .anyRequest().permitAll())
                 // Jwt 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
                 .addFilterBefore(jwtAuthenticationFilter
