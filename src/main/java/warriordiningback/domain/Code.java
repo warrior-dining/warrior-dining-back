@@ -1,6 +1,8 @@
 package warriordiningback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import warriordiningback.domain.user.User;
 
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "codes")
+@Getter
 @NoArgsConstructor
 public class Code {
 
@@ -23,6 +26,7 @@ public class Code {
     private String comment;
 
     @OneToMany(mappedBy = "gender")
+    @JsonIgnore
     private List<User> users = new ArrayList<>();
 
 }

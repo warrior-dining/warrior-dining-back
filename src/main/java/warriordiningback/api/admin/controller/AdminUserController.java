@@ -10,7 +10,6 @@ import warriordiningback.domain.user.RoleRepository;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/admin/members")
 public class AdminUserController {

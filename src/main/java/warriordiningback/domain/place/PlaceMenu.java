@@ -24,15 +24,19 @@ public class PlaceMenu {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false, name = "view_order")
+    @Column(name = "view_order")
     private int viewOrder;
 
-    public static PlaceMenu create( Place place, String menu, int price, int viewOrder) {
+    public static PlaceMenu create( Place place, String menu, int price) {
         PlaceMenu placeMenu = new PlaceMenu();
         placeMenu.place = place;
         placeMenu.menu = menu;
         placeMenu.price = price;
-        placeMenu.viewOrder = viewOrder;
         return placeMenu;
+    }
+
+    public void update(String menu, int price) {
+        this.menu = menu;
+        this.price = price;
     }
 }

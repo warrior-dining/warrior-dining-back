@@ -83,6 +83,25 @@ public class Place extends BaseEntity {
         place.comment = comment;
         return place;
     }
-    /* ========== */
+
+    public void update(String name,
+                       User user,
+                       Code category,
+                       String addressNew,
+                       String phone,
+                       String startTime,
+                       String endTime ,
+                       String offDay,
+                       String comment) {
+        this.name = name;
+        this.user = user;
+        this.code = category;
+        this.addressNew = addressNew;
+        this.phone = phone;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.offDay = offDay;
+        this.comment = comment;
+    }
 
 }
