@@ -12,7 +12,7 @@ public class TokenResponse {
     private String grantType;
 
     private String accessToken;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date accessTokenExpireAt;
 
@@ -20,4 +20,6 @@ public class TokenResponse {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date refreshTokenExpireAt;
+
+    private boolean status;
 }

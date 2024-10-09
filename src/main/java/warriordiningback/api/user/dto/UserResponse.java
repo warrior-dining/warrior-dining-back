@@ -14,6 +14,7 @@ import java.util.Set;
 public class UserResponse {
 
     private Long id;
+    private String name;
     private String email;
     private boolean isUsed;
     private Set<Role> roles;
@@ -24,14 +25,18 @@ public class UserResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
+    private boolean status;
+
     public static UserResponse of(User user) {
         return UserResponse.builder()
                 .id(user.getId())
+                .name(user.getName())
                 .email(user.getEmail())
                 .isUsed(user.isUsed())
                 .roles(user.getRoles())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
+                .status(true)
                 .build();
     }
 }

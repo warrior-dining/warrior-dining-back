@@ -36,3 +36,8 @@ application-secret.yml
 
 ### VS Code ###
 .vscode/
+
+### DB ###
+/db
+
+.env
