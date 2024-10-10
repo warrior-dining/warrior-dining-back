@@ -6,21 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
-import warriordiningback.domain.place.Place;
-import warriordiningback.domain.place.PlaceMenu;
-import warriordiningback.domain.place.PlaceMenuRepository;
-import warriordiningback.domain.place.PlaceRepository;
+import warriordiningback.domain.place.*;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,12 +39,16 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
 
     @Autowired
     private AdminFileService adminFileService;
+    @Autowired
+    private PlaceFileRepository placeFileRepository;
 
     @Override
-    public Map<String, Object> placeList() {
+    public Map<String, Object> placeList(Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
+        Page<Place> resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
+
         resultMap.put("status", true);
-        resultMap.put("results", placeRepository.findAll());
+        resultMap.put("results", resPlaces);
         resultMap.put("message", "success");
         return resultMap;
     }
@@ -78,7 +79,6 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
             return Collections.singletonMap("status", false);
         }
         /* Place 테이블에 인서트 하는 로직 */
-        log.info("========== 음식점 정보 저장 로직 시작 ============");
         User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new RuntimeException("그런 사용자 없음."));
         Code category = codeRepository.findById(Long.valueOf(placeInfo.get("category").toString())).orElseThrow(()-> new RuntimeException("그런 코드 없음"));
         Place place = Place.create(placeInfo.get("name").toString(),
@@ -90,23 +90,16 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
                 placeInfo.get("endtime").toString(),
                 placeInfo.get("offday").toString(),
                 placeInfo.get("description").toString());
-        place = placeRepository.save(place);
-        log.info("========== 음식점 정보 저장 로직 끝 ============");
-
+        placeRepository.save(place);
         /* Menu 테이블에 인서트 하는 로직 */
-        log.info("========== 음식점 메뉴 정보 저장 로직 시작 ============");
-        Long insertPlaceId = place.getId();
         for(int i = 0; i < menuItems.size(); i++){
             Map<String, Object> menuItem = menuItems.get(i);
-            PlaceMenu menu = PlaceMenu.create(place, menuItem.get("name").toString(), Integer.parseInt(menuItem.get("price").toString()), Integer.parseInt(menuItem.get("id").toString()));
+            PlaceMenu menu = PlaceMenu.create(place, menuItem.get("name").toString(), Integer.parseInt(menuItem.get("price").toString()));
             placeMenuRepository.save(menu);
         }
-        log.info("========== 음식점 메뉴 정보 저장 로직 끝 =============");
 
         /* 이미지 파일 테이블에 인서트 하는 로직 */
-        log.info("========== 음식점 사진 정보 저장 로직 시작 ============");
         adminFileService.fileUpload(files, place);
-        log.info("========== 음식점 사진 정보 저장 로직 끝 =============");
 
         Place resPlace = placeRepository.findById(place.getId()).orElseThrow(()-> new RuntimeException("그런 아이디 없다."));
         Map<String, Object> resultMap = new HashMap<>();
@@ -115,4 +108,91 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         resultMap.put("message", "success");
         return resultMap;
     }
+
+    @Override
+    public Map<String, Object> placeEdit(Long placeId, MultipartFile[] files, String existingImagesJson, String menuItemsJson, String placeInfoJson) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> existingImages;
+        List<Map<String, Object>> menuItems;
+        Map<String, Object> placeInfo;
+        try {
+            existingImages = objectMapper.readValue(existingImagesJson, new TypeReference<List<Map<String, Object>>>() {});
+            menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<List<Map<String, Object>>>() {});
+            placeInfo = objectMapper.readValue(placeInfoJson, new TypeReference<Map<String, Object>>() {});
+        } catch (JsonProcessingException e) {
+            log.error("JSON 변환 실패", e);
+            return Collections.singletonMap("status", false);
+        }
+
+        /* 음식점 테이블 데이터 수정 작업 */
+        Place editPlace = placeRepository.findById(placeId).orElseThrow(()-> new RuntimeException("해당 아이디 음식점 없음"));
+        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new RuntimeException("그런 사용자 없음."));
+        Code category = codeRepository.findById(Long.valueOf(placeInfo.get("category").toString())).orElseThrow(()-> new RuntimeException("그런 코드 없음"));
+        editPlace.update(placeInfo.get("name").toString(), userInfo, category,
+                placeInfo.get("location").toString(),
+                placeInfo.get("phone").toString(),
+                placeInfo.get("starttime").toString(),
+                placeInfo.get("endtime").toString(),
+                placeInfo.get("offday").toString(),
+                placeInfo.get("description").toString());
+
+        /* 음식점 메뉴 테이블 데이터 수정 */
+        List<PlaceMenu> asIsMenu = placeMenuRepository.findByPlaceId(placeId);
+        if(menuItems.size() > asIsMenu.size() ){
+            for(int i = 0; i < menuItems.size(); i++){
+                if(i < asIsMenu.size()) {
+                    Map<String, Object> menuItem = menuItems.get(i);
+                    PlaceMenu toBeMenu = asIsMenu.get(i);
+                    toBeMenu.update(menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
+                } else {
+                    Map<String, Object> menuItem = menuItems.get(i);
+                    PlaceMenu toBeMenu = PlaceMenu.create(editPlace, menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
+                    placeMenuRepository.save(toBeMenu);
+                }
+            }
+        } else if( menuItems.size() == asIsMenu.size() ) {
+            for(int i = 0; i < menuItems.size(); i++) {
+                Map<String, Object> menuItem = menuItems.get(i);
+                PlaceMenu toBeMenu = asIsMenu.get(i);
+                toBeMenu.update(menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
+            }
+        } else {
+            for(int i = 0; i < asIsMenu.size(); i++) {
+                if(i < menuItems.size()){
+                    Map<String, Object> menuItem = menuItems.get(i);
+                    PlaceMenu toBeMenu = asIsMenu.get(i);
+                    toBeMenu.update(menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
+                } else {
+                    placeMenuRepository.deleteById(asIsMenu.get(i).getId());
+                }
+            }
+        }
+
+// 기존 이미지 처리
+        List<PlaceFile> asIsFile = placeFileRepository.findByPlaceId(placeId);
+
+        // 1. existingImages 리스트에 없는 파일 삭제
+        Set<String> existingImageIds = existingImages.stream()
+                .map(image -> image.get("id").toString()) // 각 이미지에 ID가 있다고 가정
+                .collect(Collectors.toSet());
+
+        for (PlaceFile placeFile : asIsFile) {
+            if (!existingImageIds.contains(placeFile.getId().toString())) {
+                placeFileRepository.deleteById(placeFile.getId());
+            }
+        }
+
+        if (files != null && files.length > 0) {
+            adminFileService.fileUpload(files, editPlace);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("status", true);
+        resultMap.put("results", editPlace);
+        resultMap.put("message", "success");
+        return resultMap;
+    }
+
+
 }

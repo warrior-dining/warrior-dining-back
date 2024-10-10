@@ -1,5 +1,6 @@
 package warriordiningback.api.admin.controller;
 
+import org.springframework.data.domain.Pageable;
 import warriordiningback.api.admin.service.AdminPlaceService;
 import warriordiningback.components.FileComponent;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/admin/places")
 public class AdminPlaceController {
@@ -24,8 +24,8 @@ public class AdminPlaceController {
     private FileComponent fileComponent;
 
     @GetMapping("/")
-    public Map<String, Object> placeList(){
-        return adminPlaceService.placeList();
+    public Map<String, Object> placeList(Pageable pageable){
+        return adminPlaceService.placeList(pageable);
     }
 
     @GetMapping("/info/{placeId:[0-9]+}")
@@ -40,19 +40,19 @@ public class AdminPlaceController {
 
         return adminPlaceService.placeAdd(files, menuItemJson, placeInfoJson);
     }
-//
-//    @PostMapping("/filesUpload")
-//    public Map<String, Object> filesUpload(@RequestParam("file") MultipartFile[] files) {
-//        return fileService.fileUpload(files);
-//    }
-//
-//    @GetMapping("/filesRead")
-//    public Map<String, Object> filesRead() {
-//        return fileService.findAll();
-//    }
-////
+
     @GetMapping("/view")
     public ResponseEntity<?> view(@RequestParam("url") String url) {
         return fileComponent.getFile(url);
+    }
+
+    @PutMapping("/{placeId:[0-9]+}")
+    public Map<String, Object> placeEdit(@PathVariable("placeId") Long placeId,
+                                            @RequestParam("file") MultipartFile[] files,
+                                          @RequestParam("existingImages") String existingImagesJson,
+                                          @RequestParam("menu") String menuItemJson,
+                                          @RequestParam("place") String placeInfoJson){
+
+        return adminPlaceService.placeEdit(placeId, files, existingImagesJson, menuItemJson, placeInfoJson);
     }
 }
