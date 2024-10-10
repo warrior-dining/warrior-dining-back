@@ -22,8 +22,10 @@ public class AdminUserController {
     private RoleRepository roleRepository;
 
     @GetMapping("/")
-    public Map<String, Object> userList (Pageable pageable){
-        return adminUserService.findByAll(pageable);
+    public Map<String, Object> userList (@RequestParam(name = "type", required = false) String searchType,
+                                         @RequestParam(name = "keyword", required = false) String searchKeyword,
+                                         Pageable pageable){
+        return adminUserService.findByAll(pageable, searchType, searchKeyword );
     }
 
     @GetMapping("/info/{userId:[0-9]+}")

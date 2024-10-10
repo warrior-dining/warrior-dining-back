@@ -31,10 +31,30 @@ public class AdminUserServiceImp implements AdminUserService {
     private AdminFileService adminFileService;
 
     @Override
-    public Map<String, Object> findByAll(Pageable pageable) {
+    public Map<String, Object> findByAll(Pageable pageable, String searchType, String searchKeyword) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<User> users = userRepository.findAll(pageable);
-
+        Page<User> users;
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            // 검색어가 있을 경우, searchType에 따라 검색
+            switch (searchType) {
+                case "email":
+                    users = userRepository.findByEmailContaining(searchKeyword, pageable);
+                    break;
+                case "name":
+                    users = userRepository.findByNameContaining(searchKeyword, pageable);
+                    break;
+                case "roles":
+                    Role findRole = roleRepository.findByRole(searchKeyword).orElseThrow(()-> new RuntimeException("Role not found"));
+                    users = userRepository.findByRolesContaining(findRole, pageable);
+                    break;
+                default:
+                    users = userRepository.findAll(pageable);
+                    break;
+            }
+        } else {
+            // 검색어가 없을 경우, 모든 사용자 반환
+            users = userRepository.findAll(pageable);
+        }
         resultMap.put("status", true);
         resultMap.put("results", users);
         resultMap.put("message", "success");
