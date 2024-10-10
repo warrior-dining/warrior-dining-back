@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.place.*;
+import warriordiningback.domain.user.Role;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
 
@@ -43,9 +44,26 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
     private PlaceFileRepository placeFileRepository;
 
     @Override
-    public Map<String, Object> placeList(Pageable pageable) {
+    public Map<String, Object> placeList(String searchType, String searchKeyword, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Place> resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
+        Page<Place> resPlaces;
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+
+            switch (searchType) {
+                case "name":
+                    resPlaces = placeRepository.findByNameContainingOrderByNameAsc(searchKeyword, pageable);
+                    break;
+                case "location":
+                    resPlaces = placeRepository.findByAddressNewContainingOrderByNameAsc(searchKeyword, pageable);
+                    break;
+                default:
+                    resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
+                    break;
+            }
+        } else {
+            resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
+        }
+
 
         resultMap.put("status", true);
         resultMap.put("results", resPlaces);
