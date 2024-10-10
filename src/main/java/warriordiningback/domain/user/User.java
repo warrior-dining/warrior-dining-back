@@ -40,6 +40,9 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "code_id", nullable = false)
     private Code gender;
 
+    @Column(name = "flag")
+    private Long flag;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

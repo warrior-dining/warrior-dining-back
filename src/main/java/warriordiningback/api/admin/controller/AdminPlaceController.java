@@ -1,5 +1,6 @@
 package warriordiningback.api.admin.controller;
 
+import org.springframework.data.domain.Pageable;
 import warriordiningback.api.admin.service.AdminPlaceService;
 import warriordiningback.components.FileComponent;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,8 @@ public class AdminPlaceController {
     private FileComponent fileComponent;
 
     @GetMapping("/")
-    public Map<String, Object> placeList(){
-        return adminPlaceService.placeList();
+    public Map<String, Object> placeList(Pageable pageable){
+        return adminPlaceService.placeList(pageable);
     }
 
     @GetMapping("/info/{placeId:[0-9]+}")

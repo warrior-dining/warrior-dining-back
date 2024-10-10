@@ -2,6 +2,7 @@ package warriordiningback.api.admin.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import warriordiningback.api.admin.service.AdminUserService;
@@ -21,8 +22,8 @@ public class AdminUserController {
     private RoleRepository roleRepository;
 
     @GetMapping("/")
-    public Map<String, Object> userList (){
-        return adminUserService.findByAll();
+    public Map<String, Object> userList (Pageable pageable){
+        return adminUserService.findByAll(pageable);
     }
 
     @GetMapping("/info/{userId:[0-9]+}")

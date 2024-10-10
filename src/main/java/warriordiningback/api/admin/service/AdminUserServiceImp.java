@@ -3,6 +3,8 @@ package warriordiningback.api.admin.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.domain.user.Role;
@@ -29,12 +31,13 @@ public class AdminUserServiceImp implements AdminUserService {
     private AdminFileService adminFileService;
 
     @Override
-    public Map<String, Object> findByAll() {
+    public Map<String, Object> findByAll(Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
+        Page<User> users = userRepository.findAll(pageable);
+
         resultMap.put("status", true);
-        resultMap.put("results", userRepository.findAll());
+        resultMap.put("results", users);
         resultMap.put("message", "success");
-        log.info("debug: {}",resultMap.toString());
         return resultMap;
     }
 

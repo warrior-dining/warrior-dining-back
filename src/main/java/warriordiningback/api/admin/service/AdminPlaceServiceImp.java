@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.domain.Code;
@@ -41,10 +43,12 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
     private PlaceFileRepository placeFileRepository;
 
     @Override
-    public Map<String, Object> placeList() {
+    public Map<String, Object> placeList(Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
+        Page<Place> resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
+
         resultMap.put("status", true);
-        resultMap.put("results", placeRepository.findAll());
+        resultMap.put("results", resPlaces);
         resultMap.put("message", "success");
         return resultMap;
     }
@@ -86,11 +90,11 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
                 placeInfo.get("endtime").toString(),
                 placeInfo.get("offday").toString(),
                 placeInfo.get("description").toString());
-
+        placeRepository.save(place);
         /* Menu 테이블에 인서트 하는 로직 */
         for(int i = 0; i < menuItems.size(); i++){
             Map<String, Object> menuItem = menuItems.get(i);
-            PlaceMenu menu = PlaceMenu.create(place, menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
+            PlaceMenu menu = PlaceMenu.create(place, menuItem.get("name").toString(), Integer.parseInt(menuItem.get("price").toString()));
             placeMenuRepository.save(menu);
         }
 
