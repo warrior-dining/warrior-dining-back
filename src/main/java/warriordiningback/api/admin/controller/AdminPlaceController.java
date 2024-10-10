@@ -24,8 +24,10 @@ public class AdminPlaceController {
     private FileComponent fileComponent;
 
     @GetMapping("/")
-    public Map<String, Object> placeList(Pageable pageable){
-        return adminPlaceService.placeList(pageable);
+    public Map<String, Object> placeList(@RequestParam(name = "type", required = false) String searchType,
+                                        @RequestParam(name = "keyword", required = false) String searchKeyword,
+                                         Pageable pageable){
+        return adminPlaceService.placeList(searchType, searchKeyword, pageable);
     }
 
     @GetMapping("/info/{placeId:[0-9]+}")

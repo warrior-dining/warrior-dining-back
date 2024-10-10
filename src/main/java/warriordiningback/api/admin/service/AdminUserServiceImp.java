@@ -31,7 +31,7 @@ public class AdminUserServiceImp implements AdminUserService {
     private AdminFileService adminFileService;
 
     @Override
-    public Map<String, Object> findByAll(Pageable pageable, String searchType, String searchKeyword) {
+    public Map<String, Object> findByAll(String searchType, String searchKeyword, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<User> users;
         if (searchKeyword != null && !searchKeyword.isEmpty()) {

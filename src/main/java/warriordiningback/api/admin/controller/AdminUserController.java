@@ -25,7 +25,7 @@ public class AdminUserController {
     public Map<String, Object> userList (@RequestParam(name = "type", required = false) String searchType,
                                          @RequestParam(name = "keyword", required = false) String searchKeyword,
                                          Pageable pageable){
-        return adminUserService.findByAll(pageable, searchType, searchKeyword );
+        return adminUserService.findByAll( searchType, searchKeyword, pageable );
     }
 
     @GetMapping("/info/{userId:[0-9]+}")
