@@ -12,7 +12,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Getter
 @Table(name = "codes")
 @Getter
 @NoArgsConstructor

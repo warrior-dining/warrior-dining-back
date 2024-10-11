@@ -59,14 +59,14 @@ public class Inquiry {
 	@OneToOne(mappedBy = "inquiry")
 	private InquiriesAnswer answer;
 	
-	public static Inquiry updateCode(String title, String content, LocalDateTime updatedAt, Code code, User user) {
-		Inquiry add = new Inquiry();
-		add.title = title;
-		add.content = content;
-		add.updatedAt = LocalDateTime.now();
-		add.code = code;
-		add.user = user;
-		return add;
+	
+	   	public void updateCode(String title, String content, Code code, User user) {
+		this.title = title;
+		this.content = content;
+		this.updatedAt = LocalDateTime.now();
+		this.code = code;
+		this.user = user;
+		
 	}
 
 	

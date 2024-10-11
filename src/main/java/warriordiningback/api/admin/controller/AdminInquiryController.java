@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,9 +42,9 @@ public class AdminInquiryController {
 	private CodeRepository codeRepository;
 	
 	@GetMapping("/")
-	public Map<String, Object> inquiry() {
+	public Map<String, Object> inquiry(Pageable pageable) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("data", inquiryRepository.findAll());
+		map.put("data", inquiryRepository.findAllByOrderByIdDesc(pageable));
 		return map;
 	}
 	
@@ -60,17 +61,18 @@ public class AdminInquiryController {
 		log.info("호출완료");
 		Map<String, Object> responseMap = new HashMap<>();
 		// Content 값 넣기 해야되는데.....컨텐츠, 인쿼리 객체, 유저정보(답변을 작성하는 관리자 정보)
-		Inquiry inquiry = inquiryRepository.findById(id).orElseThrow(()-> new RuntimeException("uhuhu"));
-		log.info("Inquriy : {}", inquiry);			
+		Inquiry updateInquiryStatus = inquiryRepository.findById(id).orElseThrow(()-> new RuntimeException("uhuhu"));
+		log.info("Inquriy : {}", updateInquiryStatus);			
 		// 로그인기능 구현시 꼭!! findById 수정
 		User user = userRepository.findById(1L).orElseThrow(()-> new RuntimeException("hhhh"));
-		InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content"), inquiry, user);
+		InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content"), updateInquiryStatus, user);
 		saveAnswer = answerRepository.save(saveAnswer);
-		//inquiry를 여기서 다시 불러서 상태값 처리됨으로 업데이트
 		
-		inquiry = inquiryRepository.findById(id).orElseThrow(()-> new RuntimeException("아이디 없음"));
-		Inquiry updateCode = inquiry.updateCode(inquiry.getTitle(), inquiry.getContent(), code, inquiry.getUser());
-		responseMap.put("results", saveAnswer);
+		//inquiry를 여기서 다시 불러서 상태값 처리됨으로 업데이트
+		Code answerCode = codeRepository.findById(16L).orElseThrow(()-> new RuntimeException("해당코드 못찾음"));
+		updateInquiryStatus.updateCode(updateInquiryStatus.getTitle(), updateInquiryStatus.getContent(), answerCode, updateInquiryStatus.getUser());
+		inquiryRepository.save(updateInquiryStatus);
+		responseMap.put("results", updateInquiryStatus);
 		return responseMap;
 	}
 }
