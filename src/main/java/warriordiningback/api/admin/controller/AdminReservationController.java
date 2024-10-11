@@ -50,12 +50,9 @@ public class AdminReservationController {
 		
 		if(reservationRepository.existsById(id)) {
 			Reservation reservations = reservationRepository.findById(id).orElseThrow(()-> new RuntimeException("해당아이디 없음"));
-			Reservation updateReservation = reservations.updateStatus(
-					id, reservations.getReservationDate(), reservations.getReservationTime(), reservations.getCount(), 
-		            reservations.getOrderNote(), reservations.getUser(), reservations.getPlace(), code);
-			updateReservation = reservationRepository.save(updateReservation);
+			reservations.updateStatus(code);
 			responseMap.put("status", true);
-			responseMap.put("results", updateReservation);
+			responseMap.put("results", reservations);
 		}
 		return responseMap;
 	}

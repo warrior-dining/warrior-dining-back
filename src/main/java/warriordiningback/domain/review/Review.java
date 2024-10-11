@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import warriordiningback.domain.BaseEntity;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.reservation.Reservation;
 import warriordiningback.domain.user.User;
@@ -25,22 +26,8 @@ import warriordiningback.domain.user.User;
 @Getter
 @Entity
 @Table(name = "reviews")
-public class Review {
-	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class Review extends BaseEntity {
 
-    @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-	
 	@Column(nullable = false)
 	private int rating;
 	
@@ -61,17 +48,9 @@ public class Review {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-	
-	public static Review updateIsdelete(Long id , int rating, String content, boolean isDeleted, Reservation reservations, Place places , User user) {
-		Review deleteReviews = new Review();
-		deleteReviews.id = id;
-		deleteReviews.updatedAt = LocalDateTime.now();
-		deleteReviews.rating = rating;
-		deleteReviews.content = content;
-		deleteReviews.isDeleted = isDeleted;
-		deleteReviews.reservation = reservations;
-		deleteReviews.place = places;
-		deleteReviews.user = user;
-		return deleteReviews;
+
+	public void updateIsdelete(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
+
 }

@@ -70,7 +70,7 @@ public class AdminInquiryController {
 		
 		//inquiry를 여기서 다시 불러서 상태값 처리됨으로 업데이트
 		Code answerCode = codeRepository.findById(16L).orElseThrow(()-> new RuntimeException("해당코드 못찾음"));
-		updateInquiryStatus.updateCode(updateInquiryStatus.getTitle(), updateInquiryStatus.getContent(), answerCode, updateInquiryStatus.getUser());
+		updateInquiryStatus.updateCode(answerCode);
 		inquiryRepository.save(updateInquiryStatus);
 		responseMap.put("results", updateInquiryStatus);
 		return responseMap;

@@ -43,9 +43,8 @@ public class AdminReviewController {
 
 	    if (reviewsRepository.existsById(id)) {
 	    	Review review = reviewsRepository.findById(id).orElseThrow(()-> new RuntimeException("해당아이디 없다"));
-	        Review updateReview = Review.updateIsdelete(id, review.getRating(), review.getContent(), isDeleted, review.getReservation(), review.getPlace(), review.getUser()); // 상태 직접 업데이트
-	        updateReview = reviewsRepository.save(updateReview);
-	        responseMap.put("results", updateReview); // 업데이트된 리뷰 반환
+	       	review.updateIsdelete(isDeleted); // 상태 직접 업데이트
+	        responseMap.put("results", review); // 업데이트된 리뷰 반환
 	    } else {
 	        responseMap.put("error", "리뷰를 찾을 수 없습니다.");
 	    }
