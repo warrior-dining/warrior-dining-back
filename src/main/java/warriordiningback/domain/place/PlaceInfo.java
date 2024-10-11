@@ -1,15 +1,18 @@
 package warriordiningback.domain.place;
 
+import java.util.List;
+
 public interface PlaceInfo {
 
     String getName();
 
     String getComment();
 
-    PlaceFileInfo getPlaceFiles();
+    List<PlaceFileInfo> getPlaceFiles();
 
     interface PlaceFileInfo {
         String getUrl();
+
     }
 
 }
