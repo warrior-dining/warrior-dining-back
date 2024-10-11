@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,9 +28,9 @@ public class AdminReservationController {
 	@Autowired CodeRepository codeRepository;
 	
 	@GetMapping("/")
-	public Map<String, Object> map() {
+	public Map<String, Object> map(Pageable pageable) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("data", reservationRepository.findAll());
+		map.put("data", reservationRepository.findAllByOrderByIdDesc(pageable));
 		return map;
 	}
 	
@@ -49,8 +50,9 @@ public class AdminReservationController {
 		
 		if(reservationRepository.existsById(id)) {
 			Reservation reservations = reservationRepository.findById(id).orElseThrow(()-> new RuntimeException("해당아이디 없음"));
-			Reservation updateReservation = reservations.updateStatus(id, reservations.getReservationDate(), reservations.getReservationTime()
-											 ,reservations.getCount(), reservations.getOrderNote(), reservations.getUser(), reservations.getPlace(), code);
+			Reservation updateReservation = reservations.updateStatus(
+					id, reservations.getReservationDate(), reservations.getReservationTime(), reservations.getCount(), 
+		            reservations.getOrderNote(), reservations.getUser(), reservations.getPlace(), code);
 			updateReservation = reservationRepository.save(updateReservation);
 			responseMap.put("status", true);
 			responseMap.put("results", updateReservation);
