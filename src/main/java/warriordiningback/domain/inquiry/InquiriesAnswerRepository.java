@@ -6,4 +6,3 @@ public interface InquiriesAnswerRepository extends JpaRepository<InquiriesAnswer
 	
 
 }
-//
