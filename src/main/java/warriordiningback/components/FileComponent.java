@@ -1,11 +1,15 @@
 package warriordiningback.components;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
+import warriordiningback.domain.place.PlaceFile;
+import warriordiningback.domain.place.PlaceFileRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +19,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class FileComponent {
+
+	@Autowired
+	private PlaceFileRepository placeFileRepository;
 
 	  private Map<String, Object> resultMap;
 	  private String lastPath = "/upload";
@@ -47,6 +55,7 @@ public class FileComponent {
 	    resultMap.put("Name", getName(multipartFile));
 	    resultMap.put("NewName", setName());
 	    resultMap.put("Extension", getExtension(multipartFile));
+		resultMap.put("MediaType", multipartFile.getContentType());
 	    return resultMap;
 	  }
 
@@ -80,14 +89,16 @@ public class FileComponent {
 	    return url;
 	  }
 
-	  public ResponseEntity<?> getFile(String url) {
+	  public ResponseEntity<?> getFile(String savePath) {
 	    try {
-	      String path = getRootPath().concat(middlePath).concat(url);
-	      File file = new File(path);
-	      return ResponseEntity.ok()
-	        .contentLength(file.length())
-	        .contentType(MediaType.parseMediaType("image/png"))
-	        .body(new InputStreamResource(new FileInputStream(file)));
+			PlaceFile placeFile = placeFileRepository.findBySavePath(savePath).orElseThrow(()->new RuntimeException("File not found"));
+			log.info(placeFile.toString());
+	      	String path = getRootPath().concat(middlePath).concat(savePath);
+			  File file = new File(path);
+			  return ResponseEntity.ok()
+				.contentLength(file.length())
+				.contentType(MediaType.parseMediaType(placeFile.getMediaType()))
+				.body(new InputStreamResource(new FileInputStream(file)));
 	    } catch (Exception e) {
 	      e.printStackTrace();
 	      return ResponseEntity.notFound().build();

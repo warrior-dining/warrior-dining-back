@@ -47,10 +47,10 @@ public class AdminFileService {
         String viewUrl = "http://localhost:8080/api/admin/places/view?url=";
         Map<String, Object> data = new HashMap<>();
         data = fileComponent.setFile(file);
+
         PlaceFile placeFile= PlaceFile.create( placeInfo, data.get("Name").toString(),
                         data.get("Extension").toString(), viewUrl + url,
-                        data.get("NewName").toString(), url,
-                        "image/png", index);
+                        data.get("NewName").toString(), url, data.get("MediaType").toString(), index);
         placeFile = placeFileRepository.save(placeFile);
         return placeFile.getId();
     }
