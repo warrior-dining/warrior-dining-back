@@ -60,7 +60,7 @@ public class Inquiry {
 	private InquiriesAnswer answer;
 	
 	
-	   	public void updateCode(String title, String content, Code code, User user) {
+   	public void updateCode(String title, String content, Code code, User user) {
 		this.title = title;
 		this.content = content;
 		this.updatedAt = LocalDateTime.now();
