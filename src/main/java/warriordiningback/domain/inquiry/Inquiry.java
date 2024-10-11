@@ -17,34 +17,21 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import warriordiningback.domain.BaseEntity;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.user.User;
 
 @Getter
 @Entity
 @Table(name = "inquiries")
-public class Inquiry {
+public class Inquiry extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
 	@Column(nullable = false)
 	private String title;
 	
 	@Column(nullable = false)
 	private String content;
-	
-	@CreationTimestamp
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-	
-	@UpdateTimestamp
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
-	
+
 	@Column(name = "is_deleted")
 	private boolean isDeleted;
 	
@@ -60,13 +47,8 @@ public class Inquiry {
 	private InquiriesAnswer answer;
 	
 	
-   	public void updateCode(String title, String content, Code code, User user) {
-		this.title = title;
-		this.content = content;
-		this.updatedAt = LocalDateTime.now();
+   	public void updateCode(Code code) {
 		this.code = code;
-		this.user = user;
-		
 	}
 
 	
