@@ -26,6 +26,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findAllByContentContainingOrderByIdDesc(String content, Pageable pageable);
 
-    Page<Review> findAll(Pageable pageable);
+    Page<Review> findAllByRatingOrderByCreatedAtDesc(int rating, Pageable pageable);
+    Page<Review> findAllByIsDeletedOrderByCreatedAtDesc(boolean isDeleted, Pageable pageable);
+    Page<Review> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<Review> findAllByOrderByCreatedAtAsc(Pageable pageable);
+
+
 
 }

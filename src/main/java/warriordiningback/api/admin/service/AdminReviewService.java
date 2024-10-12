@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface AdminReviewService {
 
-    public Map<String, Object> reviewList(String searchType, String searchKeyword, Pageable pageable);
+    public Map<String, Object> reviewList(String searchType, String searchKeyword, String sortType,Pageable pageable);
 }

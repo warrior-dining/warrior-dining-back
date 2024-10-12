@@ -26,8 +26,10 @@ public class AdminReviewController {
 	@GetMapping("/")
 	public Map<String, Object> reviewList(@RequestParam(name = "searchtype", required = false) String searchType,
 										  @RequestParam(name = "searchkeyword", required = false) String searchKeyword,
+										  @RequestParam(name = "sorttype", required = false) String sortType,
 										  Pageable pageable) {
-		return adminReviewService.reviewList(searchType, searchKeyword, pageable);
+		log.info("sortType:  {}" , sortType);
+		return adminReviewService.reviewList(searchType, searchKeyword, sortType ,pageable);
 	}
 	
 	
