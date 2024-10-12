@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.extern.slf4j.Slf4j;
+import warriordiningback.api.admin.service.AdminReviewService;
 import warriordiningback.domain.review.Review;
 import warriordiningback.domain.review.ReviewRepository;
 
@@ -22,12 +19,15 @@ public class AdminReviewController {
 
 	@Autowired
 	private ReviewRepository reviewsRepository;
+
+	@Autowired
+	private AdminReviewService adminReviewService;
 	
 	@GetMapping("/")
-	public Map<String, Object> review() {
-		Map<String, Object> map = new HashMap<>();
-		map.put("data", reviewsRepository.findAll());
-		return map;
+	public Map<String, Object> reviewList(@RequestParam(name = "searchtype", required = false) String searchType,
+										  @RequestParam(name = "searchkeyword", required = false) String searchKeyword,
+										  Pageable pageable) {
+		return adminReviewService.reviewList(searchType, searchKeyword, pageable);
 	}
 	
 	
@@ -35,7 +35,6 @@ public class AdminReviewController {
 	public Map<String, Object> updateReviewStatus(@PathVariable("id") Long id,
 	                                              @RequestBody Map<String, Long> statusMap) {
 	    log.info("호출됨");
-
 	    // Long을 Boolean으로 변환 (1이면 true, 그 외에는 false)
 	    Boolean isDeleted = statusMap.get("status") != null && statusMap.get("status") == 1;
 	    Map<String, Object> responseMap = new HashMap<>();
