@@ -95,4 +95,10 @@ public class User extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    // 권한 체크
+    public boolean hasRole(String role) {
+        return this.roles.stream()
+                .anyMatch(r -> r.getRole().equals(role));
+    }
 }

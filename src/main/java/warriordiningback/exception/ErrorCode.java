@@ -14,7 +14,10 @@ public enum ErrorCode {
     // 404
     GENDER_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "성별에 대한 정보가 존재하지 않습니다."),
     ROLE_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "권한에 대한 정보가 존재하지 않습니다."),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+
+    //403
+    OWNER_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "해당 사용자에게 OWNER 권한이 없습니다.");
 
 
     private final HttpStatus httpStatus;
