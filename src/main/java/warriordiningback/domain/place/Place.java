@@ -39,6 +39,7 @@ public class Place extends BaseEntity {
     @Column(name = "off_day")
     private String offDay;
 
+    @Lob
     private String comment;
 
     @ManyToOne
