@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -31,5 +32,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Page<Reservation> findAllByOrderByIdDesc(Pageable pageable);
 
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.createdAt > :date ")
+    Integer countRecentReservations(@Param("date") LocalDateTime date);
+
+    long count();
 
 }
