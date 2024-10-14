@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
+import warriordiningback.domain.Code;
 
 import java.util.List;
 
@@ -29,7 +30,19 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "ORDER BY COUNT(r) DESC")
     List<MonthReservationData> findMonthPlaces(@Param("year") Integer year, @Param("month") Integer month);
 
+    
     Page<Reservation> findAllByOrderByIdDesc(Pageable pageable);
+    Page<Reservation> findById(Long id, Pageable pageable);
+    Page<Reservation> findAllByCodeOrderByCreatedAtDesc(Pageable pageable, Code code);
+    
+    @Query("SELECT r FROM Reservation r JOIN r.user u WHERE "  +
+            "u.name LIKE %:userName%")
+    Page<Reservation> findAllByUserName(@Param("userName") String userName, Pageable pageable);
+    
+    Page<Reservation> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+    @Query("SELECT r FROM Reservation r JOIN r.place p WHERE "  +
+            "p.name LIKE %:placeName%")
+    Page<Reservation> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
 
 }
