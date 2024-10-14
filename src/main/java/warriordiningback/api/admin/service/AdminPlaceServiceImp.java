@@ -13,9 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.place.*;
-import warriordiningback.domain.user.Role;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
+import warriordiningback.exception.DiningApplicationException;
+import warriordiningback.exception.ErrorCode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,8 +97,9 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
             log.error("JSON 변환 실패", e);
             return Collections.singletonMap("status", false);
         }
+        hasRole(placeInfo.get("email").toString());
         /* Place 테이블에 인서트 하는 로직 */
-        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new RuntimeException("그런 사용자 없음."));
+        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         Code category = codeRepository.findById(Long.valueOf(placeInfo.get("category").toString())).orElseThrow(()-> new RuntimeException("그런 코드 없음"));
         Place place = Place.create(placeInfo.get("name").toString(),
                 userInfo,
@@ -129,7 +131,6 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
 
     @Override
     public Map<String, Object> placeEdit(Long placeId, MultipartFile[] files, String existingImagesJson, String menuItemsJson, String placeInfoJson) {
-
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map<String, Object>> existingImages;
         List<Map<String, Object>> menuItems;
@@ -142,10 +143,10 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
             log.error("JSON 변환 실패", e);
             return Collections.singletonMap("status", false);
         }
-
+        hasRole(placeInfo.get("email").toString());
         /* 음식점 테이블 데이터 수정 작업 */
         Place editPlace = placeRepository.findById(placeId).orElseThrow(()-> new RuntimeException("해당 아이디 음식점 없음"));
-        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new RuntimeException("그런 사용자 없음."));
+        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         Code category = codeRepository.findById(Long.valueOf(placeInfo.get("category").toString())).orElseThrow(()-> new RuntimeException("그런 코드 없음"));
         editPlace.update(placeInfo.get("name").toString(), userInfo, category,
                 placeInfo.get("location").toString(),
@@ -192,7 +193,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
 
         // 1. existingImages 리스트에 없는 파일 삭제
         Set<String> existingImageIds = existingImages.stream()
-                .map(image -> image.get("id").toString()) // 각 이미지에 ID가 있다고 가정
+                .map(image -> image.get("id").toString())
                 .collect(Collectors.toSet());
 
         for (PlaceFile placeFile : asIsFile) {
@@ -204,7 +205,6 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         if (files != null && files.length > 0) {
             adminFileService.fileUpload(files, editPlace);
         }
-
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", true);
         resultMap.put("results", editPlace);
@@ -212,5 +212,11 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         return resultMap;
     }
 
+    public void hasRole(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        if (!user.hasRole("OWNER")) {
+            throw new DiningApplicationException(ErrorCode.OWNER_PERMISSION_DENIED);
+        }
+    }
 
 }
