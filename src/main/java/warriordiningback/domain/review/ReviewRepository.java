@@ -18,11 +18,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r JOIN r.user u WHERE "  +
             "u.name LIKE %:userName%")
-    Page<Review> findByUserName(@Param("userName") String userName, Pageable pageable);
+    Page<Review> findAllByUserName(@Param("userName") String userName, Pageable pageable);
 
     @Query("SELECT r FROM Review r JOIN r.place p WHERE "  +
             "p.name LIKE %:placeName%")
-    Page<Review> findByPlaceName(@Param("placeName") String placeName, Pageable pageable);
+    Page<Review> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
 
     Page<Review> findAllByContentContainingOrderByIdDesc(String content, Pageable pageable);
 

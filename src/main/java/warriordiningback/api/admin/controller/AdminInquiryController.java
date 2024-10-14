@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import warriordiningback.api.admin.service.AdminInquiryService;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.inquiry.InquiriesAnswer;
@@ -37,42 +38,27 @@ public class AdminInquiryController {
 	
 	@Autowired
 	private InquiriesAnswerRepository answerRepository;
+
+	@Autowired
+	private AdminInquiryService adminInquiryService;
 	
 	@Autowired
 	private CodeRepository codeRepository;
 	
 	@GetMapping("/")
-	public Map<String, Object> inquiry(Pageable pageable) {
-		Map<String, Object> map = new HashMap<>();
-		map.put("data", inquiryRepository.findAllByOrderByIdDesc(pageable));
-		return map;
+	public Map<String, Object> inquiryList(@RequestParam(name = "type", required = false) String searchType,
+										   @RequestParam(name = "keyword", required = false) String searchKeyword, Pageable pageable) {
+		return adminInquiryService.inquiryList(searchType, searchKeyword, pageable);
 	}
 	
 	@GetMapping("/{id:[0-9]+}")
-	public Map<String, Object> inquires(@PathVariable(name = "id") Long id){
-		Map<String, Object> map = new HashMap<>();
-		map.put("results", inquiryRepository.findById(id));
-		return map;
+	public Map<String, Object> inquiryinfo(@PathVariable(name = "id") Long id){
+		return adminInquiryService.inquiryInfo(id);
 	}
 	
 	
 	@PostMapping("/{id:[0-9]+}")
 	public Map<String, Object> inquiryAnswerSave(@PathVariable("id") Long id, @RequestBody Map<String, String> content) {
-		log.info("호출완료");
-		Map<String, Object> responseMap = new HashMap<>();
-		// Content 값 넣기 해야되는데.....컨텐츠, 인쿼리 객체, 유저정보(답변을 작성하는 관리자 정보)
-		Inquiry updateInquiryStatus = inquiryRepository.findById(id).orElseThrow(()-> new RuntimeException("uhuhu"));
-		log.info("Inquriy : {}", updateInquiryStatus);			
-		// 로그인기능 구현시 꼭!! findById 수정
-		User user = userRepository.findById(1L).orElseThrow(()-> new RuntimeException("hhhh"));
-		InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content"), updateInquiryStatus, user);
-		saveAnswer = answerRepository.save(saveAnswer);
-		
-		//inquiry를 여기서 다시 불러서 상태값 처리됨으로 업데이트
-		Code answerCode = codeRepository.findById(16L).orElseThrow(()-> new RuntimeException("해당코드 못찾음"));
-		updateInquiryStatus.updateCode(answerCode);
-		inquiryRepository.save(updateInquiryStatus);
-		responseMap.put("results", updateInquiryStatus);
-		return responseMap;
+		return adminInquiryService.inquiryAnswerSave(id, content);
 	}
 }

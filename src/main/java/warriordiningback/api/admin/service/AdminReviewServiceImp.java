@@ -24,60 +24,60 @@ public class AdminReviewServiceImp implements AdminReviewService {
     @Transactional
     public Map<String, Object> reviewList (String searchType, String searchKeyword, String sortType, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Review> searchReview;
+        Page<Review> searchReviews;
         if(searchKeyword != null && !searchKeyword.isEmpty()){
             switch (searchType) {
                 case "place":
-                   searchReview = reviewRepository.findByPlaceName(searchKeyword, pageable);
+                   searchReviews = reviewRepository.findAllByPlaceName(searchKeyword, pageable);
                    break;
                 case "user":
-                    searchReview = reviewRepository.findByUserName(searchKeyword, pageable);
+                    searchReviews = reviewRepository.findAllByUserName(searchKeyword, pageable);
                     break;
                 case "content":
-                    searchReview = reviewRepository.findAllByContentContainingOrderByIdDesc(searchKeyword, pageable);
+                    searchReviews = reviewRepository.findAllByContentContainingOrderByIdDesc(searchKeyword, pageable);
                     break;
                 default:
-                    searchReview = reviewRepository.findAllByOrderByCreatedAtDesc(pageable);
+                    searchReviews = reviewRepository.findAllByOrderByCreatedAtDesc(pageable);
                     break;
             }
         }  else if(sortType != null && !sortType.isEmpty()) {
             switch (sortType) {
                 case "1":
-                    searchReview = reviewRepository.findAllByRatingOrderByCreatedAtDesc(1, pageable);
+                    searchReviews = reviewRepository.findAllByRatingOrderByCreatedAtDesc(1, pageable);
                     break;
                 case "2":
-                    searchReview = reviewRepository.findAllByRatingOrderByCreatedAtDesc(2, pageable);
+                    searchReviews = reviewRepository.findAllByRatingOrderByCreatedAtDesc(2, pageable);
                     break;
                 case "3":
-                    searchReview = reviewRepository.findAllByRatingOrderByCreatedAtDesc(3, pageable);
+                    searchReviews = reviewRepository.findAllByRatingOrderByCreatedAtDesc(3, pageable);
                     break;
                 case "4":
-                    searchReview = reviewRepository.findAllByRatingOrderByCreatedAtDesc(4, pageable);
+                    searchReviews = reviewRepository.findAllByRatingOrderByCreatedAtDesc(4, pageable);
                     break;
                 case "5":
-                    searchReview = reviewRepository.findAllByRatingOrderByCreatedAtDesc(5, pageable);
+                    searchReviews = reviewRepository.findAllByRatingOrderByCreatedAtDesc(5, pageable);
                     break;
                 case "true":
-                    searchReview = reviewRepository.findAllByIsDeletedOrderByCreatedAtDesc(true, pageable);
+                    searchReviews = reviewRepository.findAllByIsDeletedOrderByCreatedAtDesc(true, pageable);
                     break;
                 case "false":
-                    searchReview = reviewRepository.findAllByIsDeletedOrderByCreatedAtDesc(false, pageable);
+                    searchReviews = reviewRepository.findAllByIsDeletedOrderByCreatedAtDesc(false, pageable);
                     break;
                 case "desc":
-                    searchReview = reviewRepository.findAllByOrderByCreatedAtDesc(pageable);
+                    searchReviews = reviewRepository.findAllByOrderByCreatedAtDesc(pageable);
                     break;
                 case "asc":
-                    searchReview = reviewRepository.findAllByOrderByCreatedAtAsc(pageable);
+                    searchReviews = reviewRepository.findAllByOrderByCreatedAtAsc(pageable);
                     break;
                 default:
-                    searchReview = reviewRepository.findAll(pageable);
+                    searchReviews = reviewRepository.findAll(pageable);
                     break;
              }
         } else {
-                searchReview = reviewRepository.findAll(pageable);
+                searchReviews = reviewRepository.findAll(pageable);
         }
         resultMap.put("status", true);
-        resultMap.put("results", searchReview);
+        resultMap.put("results", searchReviews);
         return resultMap;
     }
 
