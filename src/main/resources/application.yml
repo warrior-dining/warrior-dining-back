@@ -17,6 +17,13 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  batch:
+    job:
+      enabled: true
+    jdbc:
+      initialize-schema: always
+  main:
+    allow-bean-definition-overriding: true
 
 logging:
   level:
