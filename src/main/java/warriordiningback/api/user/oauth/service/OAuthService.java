@@ -1,6 +1,5 @@
 package warriordiningback.api.user.oauth.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -33,12 +32,6 @@ public class OAuthService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(request);
         String oAuthClientName = request.getClientRegistration().getClientName();
 
-        try {
-            log.info("{} : {}", oAuthClientName, new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         String name = null;
         String email = null;
         String phone_number = null;
@@ -60,14 +53,12 @@ public class OAuthService extends DefaultOAuth2UserService {
         if (oAuthClientName.equals("kakao")) {
             Map kakao_account = (Map) oAuth2User.getAttributes().get("kakao_account");
             if (kakao_account != null) {
-                log.info("kakao_account : {}", kakao_account);
                 name = kakao_account.get("name").toString();
                 email = kakao_account.get("email").toString();
                 phone_number = kakao_account.get("phone_number").toString().replace("-", "").replace(" ", "");
                 birthday = kakao_account.get("birthday").toString();
                 birthyear = kakao_account.get("birthyear").toString();
                 gender = kakao_account.get("gender").toString();
-                log.info("name : {}, phone_number : {}, birthday : {}, gender : {}, password : {}", name, phone_number, birthday, gender);
 
             }
         }
