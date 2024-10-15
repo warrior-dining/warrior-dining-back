@@ -3,7 +3,10 @@ package warriordiningback.domain.user;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -16,4 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByRolesContaining(Role role, Pageable pageable);
 
     boolean existsByEmail(String email);
+
+    @Query("SELECT count(u) from User u WHERE u.createdAt > :date")
+    Integer countRecentJoinUser(@Param("date") LocalDateTime date);
+
+    @Override
+    long count();
 }

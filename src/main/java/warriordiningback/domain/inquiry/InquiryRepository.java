@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import warriordiningback.api.admin.dto.InquiryCountDto;
 import warriordiningback.domain.inquiry.Inquiry;
 import warriordiningback.domain.review.Review;
 import warriordiningback.domain.user.User;
 import java.time.LocalDate;
+import java.util.List;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long>{
 	
@@ -25,6 +27,9 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long>{
 	@Query("SELECT i FROM Inquiry i JOIN i.code c WHERE " +
 			"c.value = :codeValue ORDER BY i.createdAt DESC ")
 	Page<Inquiry> findAllByCodeValue(@Param("codeValue") String codeValue, Pageable pageable);
+
+	@Query("SELECT new warriordiningback.api.admin.dto.InquiryCountDto(c.value, COUNT(i)) FROM Inquiry i JOIN i.code c GROUP BY c.value")
+	List<InquiryCountDto> countInquiriesByCode();
 
 
 }
