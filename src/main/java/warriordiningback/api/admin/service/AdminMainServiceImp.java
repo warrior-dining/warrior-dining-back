@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.admin.dto.InquiryCountDto;
 import warriordiningback.domain.inquiry.Inquiry;
 import warriordiningback.domain.inquiry.InquiryRepository;
+import warriordiningback.domain.place.Place;
+import warriordiningback.domain.place.PlaceRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
 import warriordiningback.domain.review.ReviewRepository;
 import warriordiningback.domain.user.UserRepository;
@@ -29,9 +31,10 @@ public class AdminMainServiceImp implements AdminMainService {
     private ReviewRepository reviewRepository;
 
     @Autowired
-    private InquiryRepository InquiryRepository;
-    @Autowired
     private InquiryRepository inquiryRepository;
+
+    @Autowired
+    private PlaceRepository placeRepository;
 
 
     @Override
@@ -69,6 +72,10 @@ public class AdminMainServiceImp implements AdminMainService {
         results.put("userTotalCount", userTotalCount);
 
         // 최근 방문자 수
+
+        // 최근 등록된 음식점
+        List<Place> placeRecent = placeRepository.findTop5ByOrderByCreatedAtDESC();
+        results.put("placeRecent", placeRecent);
 
         // resultMap에 조회된 결과 담기
         resultMap.put("status", true);
