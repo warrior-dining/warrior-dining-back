@@ -54,6 +54,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "p.name LIKE %:placeName%")
     Page<Reservation> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
 
-    Page<Reservation> findAllByUserOrderByCreatedAtDesc(User user, Pageable pageable);
+    Page<Reservation> findAllByUserOrderByReservationDateDesc(User user, Pageable pageable);
+
 
 }

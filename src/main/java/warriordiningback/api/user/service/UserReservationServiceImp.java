@@ -31,7 +31,7 @@ public class UserReservationServiceImp implements UserReservationService{
         User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
 
         Page<Reservation> myReservations;
-        myReservations = reservationRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
+        myReservations = reservationRepository.findAllByUserOrderByReservationDateDesc(user, pageable);
 
         resultMap.put("status", true);
         resultMap.put("results", myReservations);
