@@ -3,7 +3,6 @@ package warriordiningback.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,7 +27,7 @@ public class SecurityConfig { // 스프링 시큐리티 필터
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 // REST API 이므로 basic auth 및 csrf 보안을 사용하지 않음
                 .csrf(AbstractHttpConfigurer::disable)
@@ -42,8 +41,8 @@ public class SecurityConfig { // 스프링 시큐리티 필터
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/user/signin").permitAll()/*hasRole("('ROLE_USER') or ('ROLE_ADMIN') or ('ROLE_OWNER')")*/
                         .requestMatchers("/api/user/test").permitAll()/*.hasAnyAuthority("USER", "ADMIN", "OWNER")*/
-						.requestMatchers("/api/owner/**").permitAll()/* .hasAnyAuthority("ADMIN", "OWNER") */
-						.requestMatchers("/api/admin/**").permitAll()/* .hasAuthority("ADMIN") */
+                        .requestMatchers("/api/owner/**").permitAll()/* .hasAnyAuthority("ADMIN", "OWNER") */
+                        .requestMatchers("/api/admin/**").permitAll()/* .hasAuthority("ADMIN") */
                         .anyRequest().permitAll())
                 // Jwt 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
                 .addFilterBefore(jwtAuthenticationFilter

@@ -39,7 +39,6 @@ public class KakaoService extends DefaultOAuth2UserService {
             e.printStackTrace();
         }
 
-        String id = null;
         String name = null;
         String email = null;
         String phone_number = null;
@@ -47,15 +46,14 @@ public class KakaoService extends DefaultOAuth2UserService {
         String birthday = null;
         String gender = null;
 
-        if (oAuthClientName.equals("naver")) {
-            Map<String, String> responseMap = (Map) oAuth2User.getAttributes().get("response");
-            id = responseMap.get("id");
-            email = responseMap.get("email");
-            name = responseMap.get("nickname");
-        }
+//        if (oAuthClientName.equals("naver")) {
+//            Map<String, String> responseMap = (Map) oAuth2User.getAttributes().get("response");
+//            id = responseMap.get("id");
+//            email = responseMap.get("email");
+//            name = responseMap.get("nickname");
+//        }
 
         if (oAuthClientName.equals("kakao")) {
-            id = oAuth2User.getAttributes().get("id").toString();
             Map kakao_account = (Map) oAuth2User.getAttributes().get("kakao_account");
             if (kakao_account != null) {
                 log.info("kakao_account : {}", kakao_account);
