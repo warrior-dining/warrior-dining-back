@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
 import warriordiningback.domain.Code;
+import warriordiningback.domain.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,5 +53,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT r FROM Reservation r JOIN r.place p WHERE " +
             "p.name LIKE %:placeName%")
     Page<Reservation> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
+
+    Page<Reservation> findAllByUserOrderByCreatedAtDesc(User user, Pageable pageable);
 
 }
