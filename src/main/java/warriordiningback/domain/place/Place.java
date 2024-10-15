@@ -1,5 +1,6 @@
 package warriordiningback.domain.place;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,6 +18,26 @@ import java.util.List;
 @Table(name = "places")
 public class Place extends BaseEntity {
 
+    @Column(nullable = false)
+    private String name;
+
+    private String addressOld;
+
+    private String addressNew;
+
+    private String phone;
+
+    @Column(name = "start_time")
+    private String startTime;
+
+    @Column(name = "end_time")
+    private String endTime;
+
+    @Column(name = "off_day")
+    private String offDay;
+
+    private String comment;
+
     @OneToMany(mappedBy = "place")
     private final List<PlaceMenu> placeMenus = new ArrayList<>();
     //
@@ -30,23 +51,14 @@ public class Place extends BaseEntity {
 //    private List<Reservation> reservations = new ArrayList<>();
 //
     @OneToMany(mappedBy = "place")
+    @JsonIgnore
     private final List<Review> reviews = new ArrayList<>();
-    @Column(nullable = false)
-    private String name;
+
     //(fetch = FetchType.LAZY)
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    private String addressOld;
-    private String addressNew;
-    private String phone;
-    @Column(name = "start_time")
-    private String startTime;
-    @Column(name = "end_time")
-    private String endTime;
-    @Column(name = "off_day")
-    private String offDay;
-    private String comment;
+
     @ManyToOne
     @JoinColumn(name = "code_id", nullable = false)
     private Code code;
