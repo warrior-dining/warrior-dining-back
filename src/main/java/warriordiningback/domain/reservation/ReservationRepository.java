@@ -27,7 +27,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "FROM Reservation r " +
             "JOIN r.place p " +
             "WHERE FUNCTION('YEAR', r.reservationDate) = :year AND FUNCTION('MONTH', r.reservationDate) = :month " +
-            "GROUP BY p.id, r.reservationDate " +
+            "GROUP BY p.id " +
             "ORDER BY COUNT(r) DESC")
     List<MonthReservationData> findMonthPlaces(@Param("year") Integer year, @Param("month") Integer month);
 
