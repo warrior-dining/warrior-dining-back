@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    @Query("SELECT new warriordiningback.api.restaurant.dto.TopReservationData(p.name, p.comment, " +
+    @Query("SELECT new warriordiningback.api.restaurant.dto.TopReservationData(p.id, p.name, p.comment, " +
             "(SELECT MIN(pf.url) FROM p.placeFiles pf)) " +
             "FROM Reservation r " +
             "JOIN r.place p " +
@@ -22,7 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<TopReservationData> findTop10Places();
 
 
-    @Query("SELECT new warriordiningback.api.restaurant.dto.MonthReservationData(p.name, p.comment, " +
+    @Query("SELECT new warriordiningback.api.restaurant.dto.MonthReservationData(p.id, p.name, p.comment, " +
             "(SELECT MIN(pf.url) FROM p.placeFiles pf), r.reservationDate) " +
             "FROM Reservation r " +
             "JOIN r.place p " +
@@ -33,10 +33,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 
     Page<Reservation> findAllByOrderByIdDesc(Pageable pageable);
+
     Page<Reservation> findById(Long id, Pageable pageable);
+
     Page<Reservation> findAllByCodeOrderByCreatedAtDesc(Pageable pageable, Code code);
 
-    @Query("SELECT r FROM Reservation r JOIN r.user u WHERE "  +
+    @Query("SELECT r FROM Reservation r JOIN r.user u WHERE " +
             "u.name LIKE %:userName%")
     Page<Reservation> findAllByUserName(@Param("userName") String userName, Pageable pageable);
 
@@ -46,7 +48,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Integer countRecentReservations(@Param("date") LocalDateTime date);
 
     long count();
-    @Query("SELECT r FROM Reservation r JOIN r.place p WHERE "  +
+
+    @Query("SELECT r FROM Reservation r JOIN r.place p WHERE " +
             "p.name LIKE %:placeName%")
     Page<Reservation> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
 
