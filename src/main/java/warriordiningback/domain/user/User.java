@@ -101,4 +101,5 @@ public class User extends BaseEntity implements UserDetails {
         return this.roles.stream()
                 .anyMatch(r -> r.getRole().equals(role));
     }
+
 }

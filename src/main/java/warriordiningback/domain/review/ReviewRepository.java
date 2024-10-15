@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import warriordiningback.api.restaurant.dto.ReviewData;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -31,6 +33,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<Review> findAllByOrderByCreatedAtAsc(Pageable pageable);
 
+    @Query("SELECT ROUND(AVG(r.rating), 1) FROM Review r WHERE r.createdAt > :date ")
+    double avgRecentRating(@Param("date") LocalDateTime date);
 
-
+    @Override
+    long count();
 }
