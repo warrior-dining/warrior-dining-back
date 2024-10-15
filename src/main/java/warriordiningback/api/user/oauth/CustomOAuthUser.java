@@ -1,4 +1,4 @@
-package warriordiningback.api.user.oauth.kakao;
+package warriordiningback.api.user.oauth;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Getter
 @Builder
-public class CustomOAuth2User implements OAuth2User {
+public class CustomOAuthUser implements OAuth2User {
 
     private User user;
 

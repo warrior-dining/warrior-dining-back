@@ -1,4 +1,4 @@
-package warriordiningback.api.user.oauth.kakao.service;
+package warriordiningback.api.user.oauth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import warriordiningback.api.user.oauth.kakao.CustomOAuth2User;
+import warriordiningback.api.user.oauth.CustomOAuthUser;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.user.Role;
@@ -23,7 +23,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KakaoService extends DefaultOAuth2UserService {
+public class OAuthService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final CodeRepository codeRepository;
@@ -98,7 +98,7 @@ public class KakaoService extends DefaultOAuth2UserService {
             }
         }
 
-        return CustomOAuth2User.builder()
+        return CustomOAuthUser.builder()
                 .user(user)
                 .build();
     }

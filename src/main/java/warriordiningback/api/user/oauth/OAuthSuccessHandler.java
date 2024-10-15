@@ -1,4 +1,4 @@
-package warriordiningback.api.user.oauth.kakao;
+package warriordiningback.api.user.oauth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +15,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final TokenProvider tokenProvider;
 

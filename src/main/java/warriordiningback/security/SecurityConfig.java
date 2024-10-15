@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
-import warriordiningback.api.user.oauth.kakao.OAuth2SuccessHandler;
-import warriordiningback.api.user.oauth.kakao.service.KakaoService;
+import warriordiningback.api.user.oauth.OAuthSuccessHandler;
+import warriordiningback.api.user.oauth.service.OAuthService;
 import warriordiningback.token.JwtAuthenticationFilter;
 
 @Configuration
@@ -23,8 +23,8 @@ public class SecurityConfig { // 스프링 시큐리티 필터
 
     private final CorsFilter corsFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final KakaoService kakaoService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuthService OAuthService;
+    private final OAuthSuccessHandler oAuthSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -50,8 +50,8 @@ public class SecurityConfig { // 스프링 시큐리티 필터
                 .oauth2Login(oauth2 -> {
                     oauth2.authorizationEndpoint(endpoint -> endpoint.baseUri("/api/user/login")); // 프론트에서 요청 할때 사용하는 주소
                     oauth2.redirectionEndpoint(endpoint -> endpoint.baseUri("/api/user/callback/*"));  // 해당 소셜로그인 쪽에서 code, token 발행할때 우리쪽 프로젝트로 호출하는 주
-                    oauth2.userInfoEndpoint(endpoint -> endpoint.userService(kakaoService));
-                    oauth2.successHandler(oAuth2SuccessHandler);
+                    oauth2.userInfoEndpoint(endpoint -> endpoint.userService(OAuthService));
+                    oauth2.successHandler(oAuthSuccessHandler);
                 })
                 .build();
     }
