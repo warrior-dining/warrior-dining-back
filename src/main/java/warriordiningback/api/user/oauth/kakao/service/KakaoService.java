@@ -45,13 +45,17 @@ public class KakaoService extends DefaultOAuth2UserService {
         String birthyear = null;
         String birthday = null;
         String gender = null;
+        User user = null;
 
-//        if (oAuthClientName.equals("naver")) {
-//            Map<String, String> responseMap = (Map) oAuth2User.getAttributes().get("response");
-//            id = responseMap.get("id");
-//            email = responseMap.get("email");
-//            name = responseMap.get("nickname");
-//        }
+        if (oAuthClientName.equals("naver")) {
+            Map<String, String> naver_account = (Map) oAuth2User.getAttributes().get("response");
+            name = naver_account.get("name");
+            email = naver_account.get("email");
+            phone_number = naver_account.get("mobile_e164");
+            birthday = naver_account.get("birthday").replace("-", "");
+            birthyear = naver_account.get("birthyear");
+            gender = naver_account.get("gender");
+        }
 
         if (oAuthClientName.equals("kakao")) {
             Map kakao_account = (Map) oAuth2User.getAttributes().get("kakao_account");
@@ -59,7 +63,7 @@ public class KakaoService extends DefaultOAuth2UserService {
                 log.info("kakao_account : {}", kakao_account);
                 name = kakao_account.get("name").toString();
                 email = kakao_account.get("email").toString();
-                phone_number = kakao_account.get("phone_number").toString();
+                phone_number = kakao_account.get("phone_number").toString().replace("-", "").replace(" ", "");
                 birthday = kakao_account.get("birthday").toString();
                 birthyear = kakao_account.get("birthyear").toString();
                 gender = kakao_account.get("gender").toString();
@@ -70,31 +74,32 @@ public class KakaoService extends DefaultOAuth2UserService {
 
         // 신규 회원이면 추가하는 로직!!
         Long genderCode = null;
-        if (email != null && userRepository.findByEmail(email).isEmpty()) {
-            if (gender.equals("male")) {
-                genderCode = 3L;
-            } else if (gender.equals("female")) {
-                genderCode = 4L;
+        if (email != null) {
+            if (userRepository.existsByEmail(email)) {
+                user = userRepository.findByEmail(email).orElseThrow(
+                        () -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+            } else {
+                if (gender.equals("male") || gender.equals("M")) {
+                    genderCode = 3L;
+                } else if (gender.equals("female") || gender.equals("F")) {
+                    genderCode = 4L;
+                }
+
+                Code code = codeRepository.findById(genderCode).orElseThrow(
+                        () -> new DiningApplicationException(ErrorCode.GENDER_INFO_NOT_FOUND));
+
+                user = User.createKakao(email, name, birthyear + birthday, phone_number, code);
+
+                Role defaultRole = roleRepository.findById(1L).orElseThrow(
+                        () -> new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND)
+                );
+                user.getRoles().add(defaultRole);
+                user = userRepository.save(user);
             }
-            Code code = codeRepository.findById(genderCode).orElseThrow(
-                    () -> new DiningApplicationException(ErrorCode.GENDER_INFO_NOT_FOUND));
-
-            User savedUser = User.createKakao(email, name, birthyear + birthday, phone_number, code);
-
-            Role defaultRole = roleRepository.findById(1L).orElseThrow(
-                    () -> new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND)
-            );
-            savedUser.getRoles().add(defaultRole);
-            userRepository.save(savedUser);
         }
 
-
         return CustomOAuth2User.builder()
-                .name(name)
-                .email(email)
-                .phone(phone_number)
-                .birth(birthday)
-                .gender(gender)
+                .user(user)
                 .build();
     }
 
