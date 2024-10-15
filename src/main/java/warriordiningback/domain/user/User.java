@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import warriordiningback.domain.BaseEntity;
 import warriordiningback.domain.Code;
+import warriordiningback.domain.place.Place;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,6 +47,12 @@ public class User extends BaseEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "bookmarks",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "place_id"))
+    private Set<Place> bookmarks  = new HashSet<>();
 
     /* 비즈니스 로직 */
     public static User create(String email, String password, String name, String birth, String phone, Code gender) {
