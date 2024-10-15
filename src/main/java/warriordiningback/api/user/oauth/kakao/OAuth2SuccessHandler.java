@@ -23,9 +23,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-
-        // 위의 정보를 이용하여 토큰 발행 후 아래에서 프론트로 전달 
+        // 위의 정보를 이용하여 토큰 발행 후 아래에서 프론트로 전달
         TokenResponse tokenResponse = tokenProvider.generateToken(authentication);
 
         //response.sendRedirect("http://localhost:3000/auth/" + tokenResponse.getAccessToken() + );
