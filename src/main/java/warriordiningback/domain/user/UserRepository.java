@@ -5,8 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import warriordiningback.api.user.dto.BookMarkResponse;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -25,4 +27,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Override
     long count();
+
+    @Query("SELECT bm.id as placeId, bm.name as placeName, bm.addressNew, bm.phone, ROUND(COALESCE(AVG(r.rating), 0), 1) AS avgrating "
+            + "FROM User u "
+            + "JOIN u.bookmarks bm "
+            + "LEFT JOIN bm.reviews r "
+            + "WHERE u.email = :email "
+            + "GROUP BY bm.id")
+    Page<Object[]> findUserBookmarksWithAvgRating(@Param("email") String email, Pageable pageable);
 }
