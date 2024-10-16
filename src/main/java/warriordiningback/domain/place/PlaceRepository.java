@@ -22,4 +22,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     <T> Page<T> findAllById(Long id, Pageable pageable, Class<T> type);
 
+    @Query("SELECT distinct p FROM Place p JOIN p.placeMenus pm WHERE " +
+            "p.name LIKE %:keyword% OR p.addressNew LIKE %:keyword% OR pm.menu LIKE %:keyword% ")
+    Page<Place> findAllByNameOrPlaceMenuOrAddressNew(@Param("keyword") String keyword, Pageable pageable);
+
 }
