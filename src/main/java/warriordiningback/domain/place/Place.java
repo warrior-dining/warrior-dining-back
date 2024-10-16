@@ -43,11 +43,8 @@ public class Place extends BaseEntity {
     //
     @OneToMany(mappedBy = "place")
     private final List<PlaceFile> placeFiles = new ArrayList<>();
-    //
-//    @OneToMany(mappedBy = "place")
-//    private List<Bookmark> bookmarks = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "place")
+
+    //    @OneToMany(mappedBy = "place")
 //    private List<Reservation> reservations = new ArrayList<>();
 //
     @OneToMany(mappedBy = "place")
