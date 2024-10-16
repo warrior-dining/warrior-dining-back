@@ -29,11 +29,11 @@ import warriordiningback.token.service.CustomUserDetailsService;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CodeRepository codeRepository;
+    private final RoleRepository roleRepository;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final CodeRepository codeRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService customUserDetailsService;
 
