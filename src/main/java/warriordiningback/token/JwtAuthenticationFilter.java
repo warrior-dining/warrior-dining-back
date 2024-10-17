@@ -25,8 +25,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final TokenProvider tokenProvider;
-    private final String ACCESS = "Authorization1";
-    private final String REFRESH = "Authorization2";
+    private final String ACCESS = "Authorization_Access";
+    private final String REFRESH = "Authorization_Refresh";
 
     @Override
     public void doFilter(
