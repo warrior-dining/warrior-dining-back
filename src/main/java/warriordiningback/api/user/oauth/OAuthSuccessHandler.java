@@ -25,7 +25,12 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException {
         TokenResponse tokenResponse = tokenProvider.generateToken(authentication);
 
-        String redirectUrl = "http://localhost:3000/SignIn?accessToken=" + tokenResponse.getAccessToken();
+        String redirectUrl = "http://localhost:3000/SignIn?grantType="
+                + tokenResponse.getGrantType()
+                + "&accessToken="
+                + tokenResponse.getAccessToken()
+                + "&refreshToken="
+                + tokenResponse.getRefreshToken();
         response.sendRedirect(redirectUrl);
     }
 

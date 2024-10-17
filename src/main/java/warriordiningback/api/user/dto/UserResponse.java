@@ -16,6 +16,7 @@ public class UserResponse {
     private Long id;
     private String name;
     private String email;
+    private String phone;
     private boolean isUsed;
     private Set<Role> roles;
 
@@ -32,6 +33,7 @@ public class UserResponse {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .phone(user.getPhone())
                 .isUsed(user.isUsed())
                 .roles(user.getRoles())
                 .createdAt(user.getCreatedAt())
