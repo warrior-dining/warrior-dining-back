@@ -42,7 +42,6 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime();
         Map<String, String> header = new HashMap<>();
         header.put("alg", "H256");
         header.put("typ", "JWT");

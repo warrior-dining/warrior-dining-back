@@ -2,7 +2,6 @@ package warriordiningback.token;
 
 import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +31,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(
             ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
+            throws IOException {
         // 1.Request Header에서 Jwt 토큰 추출
         String accessToken = resolveToken((HttpServletRequest) servletRequest, ACCESS);
         String refreshToken = resolveToken((HttpServletRequest) servletRequest, REFRESH);
@@ -81,7 +80,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             httpResponse.getWriter().append(new Gson().toJson(errorResponse));
         }
     }
-    
+
     // Request Header에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest httpServletRequest, String header) {
         String bearerToken = httpServletRequest.getHeader(header);
