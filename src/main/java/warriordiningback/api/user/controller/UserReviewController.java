@@ -38,17 +38,17 @@ public class UserReviewController {
 		return userReviewService.myReviewDelete(id);
 	}
 	
-	@GetMapping("/info/{id:[0-9]+}")
+	@GetMapping("/{id:[0-9]+}")
 	public Map<String, Object> myReviewInfo(@PathVariable("id") Long id){
 		return userReviewService.myReviewInfo(id);
 	}
 	
-	@PutMapping("/info/{id:[0-9]+}")
+	@PutMapping("/{id:[0-9]+}")
 	public Map<String, Object> myReviewInfoEdit(@PathVariable("id") Long id, @RequestBody Map<String, Object> content) {
 		return userReviewService.myReviewInfoEdit(id, content); 
 	}
 	
-	@DeleteMapping("/info/{id:[0-9]+}")
+	@DeleteMapping("/{id:[0-9]+}")
 	public Map<String, Object> myReviewUpdateStatus(@PathVariable("id") Long id){
 		return userReviewService.myReviewDelete(id);
 	}

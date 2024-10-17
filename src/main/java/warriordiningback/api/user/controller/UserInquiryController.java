@@ -26,12 +26,12 @@ public class UserInquiryController {
 		return inquiryService.inquiryList(email, pageable);
 	}
 
-	@GetMapping("/info/{id:[0-9]+}")
+	@GetMapping("/{id:[0-9]+}")
 	public Map<String, Object> inquiryInfo(@PathVariable("id") Long id) {
 		return inquiryService.inquiryInfo(id);
 	}
 	
-	@PutMapping("/info/{id:[0-9]+}")
+	@PutMapping("/{id:[0-9]+}")
 	public Map<String, Object> inquiryInfoEdit(@PathVariable("id") Long id, @RequestBody Map<String, Object> inquiry){
 		return inquiryService.inquiryInfoEdit(id, inquiry);
 	}

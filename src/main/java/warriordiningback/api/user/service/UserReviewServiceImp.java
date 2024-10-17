@@ -18,7 +18,6 @@ import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class UserReviewServiceImp implements UserReviewService {
@@ -77,15 +76,15 @@ public class UserReviewServiceImp implements UserReviewService {
 		Map<String, Object> resultMap = new HashMap<>();
 		
 		Review updateReview = reviewRepository.findById(id).orElseThrow(()-> new DiningApplicationException(ErrorCode.REVIEW_NOT_FOUND));
-		log.info("content : {}", content);
 		updateReview.update(Integer.parseInt(content.get("rating").toString()), content.get("review").toString());
 		
 		resultMap.put("status", true);
 		resultMap.put("results", updateReview);
 		return resultMap;
 	}
-	
-//	@Override
+
+// 리뷰작성 기능을 위한 로직(보류중)	
+//	@Override 
 //	@Transactional
 //	public Map<String, Object> myReviewInfoAdd(Map<String, Object> content) {
 //		Map<String, Object> resultMap = new HashMap<>();

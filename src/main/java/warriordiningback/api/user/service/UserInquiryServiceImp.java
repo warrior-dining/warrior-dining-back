@@ -18,7 +18,6 @@ import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class UserInquiryServiceImp implements UserInquiryService {
@@ -59,7 +58,6 @@ public class UserInquiryServiceImp implements UserInquiryService {
 	public Map<String, Object> inquiryInfoEdit(Long id, Map<String, Object> inquiry) {
 		Map<String, Object> resultMap = new HashMap<>();
 		Inquiry updateInquiry = inquiryRepository.findById(id).orElseThrow(()-> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
-		log.info("inquiry : {}", inquiry);
 		updateInquiry.inquiryUpdate(inquiry.get("title").toString(), inquiry.get("content").toString());
 		
 		resultMap.put("status", true);

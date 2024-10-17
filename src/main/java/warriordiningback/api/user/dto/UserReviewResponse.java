@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import warriordiningback.domain.place.Place;
 
-@Builder
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserReviewResponse {
 
