@@ -31,5 +31,7 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long>{
 	@Query("SELECT new warriordiningback.api.admin.dto.InquiryCountDto(c.value, COUNT(i)) FROM Inquiry i JOIN i.code c GROUP BY c.value")
 	List<InquiryCountDto> countInquiriesByCode();
 
+	@Query("SELECT i FROM Inquiry i JOIN i.user u WHERE u.id = :userId")
+	Page<Inquiry> findByUser(@Param("userId") Long userId, Pageable pageable);
 
 }
