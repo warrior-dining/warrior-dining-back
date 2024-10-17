@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("SELECT new warriordiningback.api.restaurant.dto.TopReservationData(p.id, p.name, p.comment, " +
-            "(SELECT MIN(pf.url) FROM p.placeFiles pf), p.code.id) " +  // Get code_id from Place entity
+            "(SELECT MIN(pf.url) FROM p.placeFiles pf), p.code.id) " +
             "FROM Reservation r " +
             "JOIN r.place p " +
             "GROUP BY p.id, p.code.id " +
