@@ -49,8 +49,21 @@ public class Review extends BaseEntity {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
+	public void create(int rating, String content, Reservation reservation, Place place, User user) {
+		this.rating = rating;
+		this.content = content;
+		this.reservation = reservation;
+		this.place = place;
+		this.user = user;
+	}
+	
 	public void updateIsdelete(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	
+	public void update(int rating, String content) {
+		this.rating = rating;
+		this.content = content;
 	}
 
 }

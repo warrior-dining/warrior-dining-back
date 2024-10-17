@@ -41,4 +41,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     long count();
     
     Page<Review> findAllByUserOrderByCreatedAtDesc(User user ,Pageable pageable);
+    
+    @Query("SELECT r FROM Review r JOIN r.user u WHERE u.id = :userId and r.isDeleted = false")
+    Page<Review> findByUserAndIsDeleted(@Param("userId") Long userId, Pageable pageable);
 }
