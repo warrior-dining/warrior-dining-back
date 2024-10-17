@@ -1,17 +1,18 @@
 package warriordiningback.api.restaurant.dto;
 
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+import java.util.List;
+
+@Getter
 @AllArgsConstructor
-public class TopReservationData {
+public class PlaceSearchData {
 
     private Long id;
     private String name;
     private String comment;
-    private String url;
-    private Long value;
-
+    private String addressNew;
+    private String menu;
+    private List<String> url;
 }
