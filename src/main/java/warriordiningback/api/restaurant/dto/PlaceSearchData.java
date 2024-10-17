@@ -1,13 +1,13 @@
 package warriordiningback.api.restaurant.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
-public class PlaceSearchDto {
+public class PlaceSearchData {
 
     private Long id;
     private String name;
@@ -15,5 +15,4 @@ public class PlaceSearchDto {
     private String addressNew;
     private String menu;
     private List<String> url;
-
 }

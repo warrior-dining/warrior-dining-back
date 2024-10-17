@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
-import warriordiningback.api.restaurant.dto.PlaceSearchDto;
+import warriordiningback.api.restaurant.dto.PlaceSearchData;
 import warriordiningback.api.restaurant.dto.ReviewData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
 import warriordiningback.api.restaurant.service.PlaceSearchService;
@@ -62,7 +62,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/search")
-    public Page<PlaceSearchDto> searchPlaces(
+    public Page<PlaceSearchData> searchPlaces(
             @RequestParam String keyword,
             @PageableDefault(size = 10) Pageable pageable) {
         return placeSearchService.searchPlaces(keyword, pageable);
