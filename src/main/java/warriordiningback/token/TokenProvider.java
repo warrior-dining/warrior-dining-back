@@ -1,8 +1,12 @@
 package warriordiningback.token;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +23,7 @@ import javax.crypto.SecretKey;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class TokenProvider {
 
@@ -43,31 +48,31 @@ public class TokenProvider {
         header.put("typ", "JWT");
 
         // Access Token 생성
-        Date accessTokenExpireAt = new Date(now + 1000 * 60 * 30); // 30분
         String accessToken = Jwts.builder()
                 .header().add(header).and()
                 .subject(authentication.getName())
+                .issuer("ACCESS")
                 .claim("auth", authorities)
-                .expiration(accessTokenExpireAt)
+                .expiration(getDate(1))
+                .issuedAt(Calendar.getInstance().getTime())
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
 
         // Refresh Token 생성
-        Date refreshTokenExpireAt = new Date(now + 1000 * 60 * 60 * 24); // 24시간
         String refreshToken = Jwts.builder()
                 .header().add(header).and()
                 .subject(authentication.getName())
+                .issuer("REFRESH")
                 .claim("auth", authorities)
-                .expiration(refreshTokenExpireAt)
+                .expiration(getDate(1440))
+                .issuedAt(Calendar.getInstance().getTime())
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
 
         return TokenResponse.builder()
-                .grantType("Bearer")
+                .grantType("Bearer ")
                 .accessToken(accessToken)
-                .accessTokenExpireAt(accessTokenExpireAt)
                 .refreshToken(refreshToken)
-                .refreshTokenExpireAt(refreshTokenExpireAt)
                 .status(true)
                 .build();
     }
@@ -92,28 +97,73 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
-    // 토큰 정보 검증 로직
+    // 토큰 정보 검증 로그
     public boolean validateToken(String token) {
         try {
-            parseClaims(token);
+            Claims claims = parseClaims(token);
+            log.info("===============================================");
+            log.info("|IIssuedTime\t: {}|", claims.getIssuedAt());
+            log.info("|ExpireTime\t: {}|", claims.getExpiration());
+            log.info("|RealTime\t: {}|", Calendar.getInstance().getTime());
+            log.info("===============================================");
             return true;
-        } catch (SecurityException | MalformedJwtException |
-                 ExpiredJwtException | UnsupportedJwtException |
-                 IllegalArgumentException e) {
-            throw new RuntimeException(e);
+        } catch (ExpiredJwtException exception) {
+            log.info("==============");
+            log.error("Token Expired");
+        } catch (JwtException exception) {
+            log.info("==============");
+            log.error("Token Tampered");
+        } catch (NullPointerException exception) {
+            log.info("==============");
+            log.error("Token is null");
         }
+        return false;
     }
 
     private Claims parseClaims(String accessToken) {
-        try {
-            return Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(accessToken)
-                    .getPayload();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload();
+    }
+
+    private Date getDate(int interval) {
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.MINUTE, interval);
+        return date.getTime();
+    }
+
+    public TokenResponse refreshToken(String refreshToken) {
+
+        // 토큰 내용 가져오기
+        Authentication authentication = getAuthentication(refreshToken);
+
+        // 권한 가져오기
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        Map<String, String> header = new HashMap<>();
+        header.put("alg", "H256");
+        header.put("typ", "JWT");
+
+        // Access Token 생성
+        String accessToken = Jwts.builder()
+                .header().add(header).and()
+                .subject(authentication.getName())
+                .issuer("ACCESS")
+                .claim("auth", authorities)
+                .expiration(getDate(30))
+                .issuedAt(Calendar.getInstance().getTime())
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+
+        return TokenResponse.builder()
+                .grantType("Bearer ")
+                .accessToken(accessToken)
+                .status(true)
+                .build();
     }
 
 }
