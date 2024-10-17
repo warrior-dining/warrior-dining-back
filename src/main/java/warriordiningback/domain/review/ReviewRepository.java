@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import warriordiningback.api.restaurant.dto.ReviewData;
+import warriordiningback.domain.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,4 +39,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Override
     long count();
+    
+    Page<Review> findAllByUserOrderByCreatedAtDesc(User user ,Pageable pageable);
+    
+    @Query("SELECT r FROM Review r JOIN r.user u WHERE u.id = :userId and r.isDeleted = false")
+    Page<Review> findByUserAndIsDeleted(@Param("userId") Long userId, Pageable pageable);
 }
