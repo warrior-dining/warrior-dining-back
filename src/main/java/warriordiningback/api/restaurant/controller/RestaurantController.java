@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
+import warriordiningback.api.restaurant.dto.PlaceSearchDto;
 import warriordiningback.api.restaurant.dto.ReviewData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
+import warriordiningback.api.restaurant.service.PlaceSearchService;
 import warriordiningback.api.restaurant.service.RestaurantService;
 import warriordiningback.domain.place.PlaceDetailInfo;
 import warriordiningback.domain.place.PlaceInfo;
@@ -25,6 +27,9 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private PlaceSearchService placeSearchService;
 
     @GetMapping
     public Page<PlaceInfo> restaurantList(@PageableDefault(size = 10) Pageable pageable) {
@@ -49,12 +54,18 @@ public class RestaurantController {
         return restaurantService.findByReview();
     }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/{id}")
     public Page<PlaceDetailInfo> restaurantDetail(
             @PathVariable("id") Long id,
             @PageableDefault(size = 3) Pageable pageable) {
         return placeRepository.findAllById(id, pageable, PlaceDetailInfo.class);
     }
 
+    @GetMapping("/search")
+    public Page<PlaceSearchDto> searchPlaces(
+            @RequestParam String keyword,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return placeSearchService.searchPlaces(keyword, pageable);
+    }
 
 }
