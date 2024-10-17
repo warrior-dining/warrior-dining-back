@@ -1,30 +1,26 @@
 USE temp;
 
+
 DELIMITER //
 
-CREATE PROCEDURE UpdateReservationStatus()
+CREATE OR REPLACE PROCEDURE UpdateReservationStatus()
 BEGIN
-    DECLARE currentDate DATE;
 
-    -- 현재 날짜를 변수에 저장
-    SET currentDate = CURDATE();
+UPDATE reservations as r1
+    JOIN codes as c1 ON r1.status = c1.id
+    SET r1.status = 15
+WHERE r1.reservation_date = DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+  AND c1.value = '대기';
 
-    -- 예약일이 현재 날짜로부터 1일 남은 경우 '대기' 상태를 '확정'으로 업데이트
-UPDATE reservations r
-    JOIN codes c ON r.status = c.id
-    SET r.status = 15  -- '확정' 상태 코드 ID
-WHERE r.reservation_date = DATE_ADD(currentDate, INTERVAL 1 DAY)
-  AND c.value = '대기';
-
--- 예약일이 현재 날짜를 지났다면 '완료' 상태로 업데이트
-UPDATE reservations r
-    JOIN codes c ON r.status = c.id
-    SET r.status = 12  -- '완료' 상태 코드 ID
-WHERE r.reservation_date < currentDate
-  AND c.value = '확정';
+UPDATE reservations as r2
+    JOIN codes as c2 ON r2.status = c2.id
+    SET r2.status = 12
+WHERE r2.reservation_date < CURDATE()
+  AND c2.value <> '취소';
 END //
 
 DELIMITER ;
+
 
 CREATE TABLE BATCH_JOB_INSTANCE  (
 	JOB_INSTANCE_ID BIGINT  NOT NULL PRIMARY KEY ,
