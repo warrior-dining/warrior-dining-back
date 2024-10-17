@@ -41,3 +41,4 @@ application-secret.yml
 /db
 
 .env
+/src/main/resources/static/upload
