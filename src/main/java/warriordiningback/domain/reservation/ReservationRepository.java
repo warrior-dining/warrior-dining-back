@@ -24,11 +24,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 
     @Query("SELECT new warriordiningback.api.restaurant.dto.MonthReservationData(p.id, p.name, p.comment, " +
-            "(SELECT MIN(pf.url) FROM p.placeFiles pf), r.reservationDate) " +
+            "(SELECT MIN(pf.url) FROM p.placeFiles pf), r.reservationDate, p.code.id) " +
             "FROM Reservation r " +
             "JOIN r.place p " +
             "WHERE FUNCTION('YEAR', r.reservationDate) = :year AND FUNCTION('MONTH', r.reservationDate) = :month " +
-            "GROUP BY p.id " +
+            "GROUP BY p.id, p.name, p.comment , p.code.id " +
             "ORDER BY COUNT(r) DESC")
     List<MonthReservationData> findMonthPlaces(@Param("year") Integer year, @Param("month") Integer month);
 
