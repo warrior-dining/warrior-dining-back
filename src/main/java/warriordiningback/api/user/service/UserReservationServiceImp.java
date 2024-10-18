@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserReservationListResponse;
 import warriordiningback.domain.reservation.Reservation;
 import warriordiningback.domain.reservation.ReservationRepository;
+import warriordiningback.domain.review.ReviewRepository;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
@@ -28,6 +29,9 @@ public class UserReservationServiceImp implements UserReservationService{
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Override
     public Map<String, Object> myReservationList(String email, Pageable pageable) {
@@ -38,7 +42,9 @@ public class UserReservationServiceImp implements UserReservationService{
         List<UserReservationListResponse> userReservationListResponse = new ArrayList<>();
 
         for (Reservation row : myReservations.getContent()) {
+        	boolean reviewExists = reviewRepository.existsByReservationId(row.getId()); // 리뷰 존재 여부 확인
             UserReservationListResponse myReservation = new UserReservationListResponse(row);
+            myReservation.setReviewExists(reviewExists); // 리뷰 존재 여부 설정
             userReservationListResponse.add(myReservation);
         }
         Page<UserReservationListResponse> results = new PageImpl<>(userReservationListResponse, myReservations.getPageable(), myReservations.getTotalElements());

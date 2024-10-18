@@ -44,4 +44,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     
     @Query("SELECT r FROM Review r JOIN r.user u WHERE u.id = :userId and r.isDeleted = false")
     Page<Review> findByUserAndIsDeleted(@Param("userId") Long userId, Pageable pageable);
+    
+    @Query("SELECT r FROM Review r JOIN r.reservation re WHERE re.id = :reservationId")
+    Review findByReservationId(@Param("reservationId") Long reservationId);
+
+	boolean existsByReservationId(Long id);
 }

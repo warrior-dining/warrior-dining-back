@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import warriordiningback.domain.reservation.Reservation;
+
 public interface UserReviewService {
 
 	public Map<String, Object> myReviewList(String email, Pageable pageable);
@@ -14,6 +16,7 @@ public interface UserReviewService {
 	public Map<String, Object> myReviewInfo(Long id);
 	public Map<String, Object> myReviewInfoEdit(Long id, Map<String, Object> content);
 	public Map<String, Object> myReviewUpdateStatus(Long id);
-//	public Map<String, Object> myReviewInfoAdd(Map<String, Object> content);
+	public Map<String, Object> ReservationInfo(Long reservationId);
+	public Map<String, Object> createReview(Long reservationId, Map<String, Object> content);
 	
 }

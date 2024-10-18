@@ -27,6 +27,8 @@ public class UserReservationListResponse {
     private String placeName;
 
     private int count;
+    
+    private boolean reviewExists;
 
     @JsonFormat(pattern = "HH:mm:ss")
     private Date registrationTime;
@@ -46,6 +48,7 @@ public class UserReservationListResponse {
         this.orderNote = reservation.getOrderNote();
         this.bookMark = reservation.getUser().getBookmarks().stream()
                 .anyMatch(place -> place.getId().equals(reservation.getPlace().getId()));
+        this.reviewExists = false;
     }
 
 }

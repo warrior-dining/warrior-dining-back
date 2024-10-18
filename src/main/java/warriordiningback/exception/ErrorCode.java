@@ -20,6 +20,7 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자 정보가 존재하지 않습니다. 다시 로그인해 주세요."),
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 음식점에 대한 정보가 존재하지 않습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리뷰에 대한 정보가 존재하지 않습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 예약에 대한 정보가 존재하지 않습니다."),
 
     //403,
     OWNER_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "해당 사용자에게 OWNER 권한이 없습니다.");
