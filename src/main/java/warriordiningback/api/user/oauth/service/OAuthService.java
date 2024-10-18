@@ -1,7 +1,6 @@
 package warriordiningback.api.user.oauth.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -19,7 +18,6 @@ import warriordiningback.exception.ErrorCode;
 
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OAuthService extends DefaultOAuth2UserService {
@@ -59,27 +57,33 @@ public class OAuthService extends DefaultOAuth2UserService {
                 birthday = kakao_account.get("birthday").toString();
                 birthyear = kakao_account.get("birthyear").toString();
                 gender = kakao_account.get("gender").toString();
-
             }
         }
 
         // 신규 회원이면 추가하는 로직!!
-        Long genderCode = null;
+        Long newGender = null;
+        Code flagCode = null;
         if (email != null) {
             if (userRepository.existsByEmail(email)) {
                 user = userRepository.findByEmail(email).orElseThrow(
                         () -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
             } else {
                 if (gender.equals("male") || gender.equals("M")) {
-                    genderCode = 3L;
+                    newGender = 3L;
                 } else if (gender.equals("female") || gender.equals("F")) {
-                    genderCode = 4L;
+                    newGender = 4L;
                 }
 
-                Code code = codeRepository.findById(genderCode).orElseThrow(
+                if (oAuthClientName.equals("kakao")) {
+                    flagCode = codeRepository.findById(2L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+                } else if (oAuthClientName.equals("naver")) {
+                    flagCode = codeRepository.findById(18L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+                }
+
+                Code genderCode = codeRepository.findById(newGender).orElseThrow(
                         () -> new DiningApplicationException(ErrorCode.GENDER_INFO_NOT_FOUND));
 
-                user = User.createKakao(email, name, birthyear + birthday, phone_number, code);
+                user = User.createKakao(email, name, birthyear + birthday, phone_number, genderCode, flagCode);
 
                 Role defaultRole = roleRepository.findById(1L).orElseThrow(
                         () -> new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND)

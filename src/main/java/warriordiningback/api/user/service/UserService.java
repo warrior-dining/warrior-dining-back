@@ -1,7 +1,6 @@
 package warriordiningback.api.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -22,7 +21,6 @@ import warriordiningback.token.TokenProvider;
 import warriordiningback.token.response.TokenResponse;
 import warriordiningback.token.service.CustomUserDetailsService;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -62,11 +60,14 @@ public class UserService {
     @Transactional
     public User signUp(String email, String password, String name, String birth, String phone, Long gender) {
         validateUser(email);
-        Code code = codeRepository.findById(gender).orElseThrow(
+        Code genderCode = codeRepository.findById(gender).orElseThrow(
                 () -> new DiningApplicationException(ErrorCode.GENDER_INFO_NOT_FOUND));
 
+        Code flagCode = codeRepository.findById(1L).orElseThrow(
+                () -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+
         String encodedPassword = passwordEncoder.encode(password);
-        User savedUser = User.create(email, encodedPassword, name, birth, phone, code);
+        User savedUser = User.create(email, encodedPassword, name, birth, phone, genderCode, flagCode);
 
         Role defaultRole = roleRepository.findById(1L).orElseThrow(
                 () -> new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND));
