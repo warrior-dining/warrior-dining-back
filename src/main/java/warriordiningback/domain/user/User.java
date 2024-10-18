@@ -38,8 +38,12 @@ public class User extends BaseEntity implements UserDetails {
     private boolean isUsed;
 
     @ManyToOne
-    @JoinColumn(name = "code_id", nullable = false)
+    @JoinColumn(name = "code_gender", nullable = false)
     private Code gender;
+
+    @ManyToOne
+    @JoinColumn(name = "code_flag", nullable = false)
+    private Code flag;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
@@ -51,10 +55,10 @@ public class User extends BaseEntity implements UserDetails {
     @JoinTable(name = "bookmarks",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "place_id"))
-    private Set<Place> bookmarks  = new HashSet<>();
+    private Set<Place> bookmarks = new HashSet<>();
 
     /* 비즈니스 로직 */
-    public static User create(String email, String password, String name, String birth, String phone, Code gender) {
+    public static User create(String email, String password, String name, String birth, String phone, Code gender, Code flag) {
         User user = new User();
         user.email = email;
         user.password = password;
@@ -63,10 +67,11 @@ public class User extends BaseEntity implements UserDetails {
         user.phone = phone;
         user.isUsed = true;
         user.gender = gender;
+        user.flag = flag;
         return user;
     }
 
-    public static User createKakao(String email, String name, String birth, String phone, Code gender) {
+    public static User createKakao(String email, String name, String birth, String phone, Code gender, Code flag) {
         User user = new User();
         user.email = email;
         user.name = name;
@@ -74,6 +79,7 @@ public class User extends BaseEntity implements UserDetails {
         user.phone = phone;
         user.isUsed = true;
         user.gender = gender;
+        user.flag = flag;
         return user;
     }
     /* ========== */
