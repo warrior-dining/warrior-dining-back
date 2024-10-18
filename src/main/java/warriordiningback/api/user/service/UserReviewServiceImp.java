@@ -21,7 +21,6 @@ import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class UserReviewServiceImp implements UserReviewService {
@@ -57,7 +56,6 @@ public class UserReviewServiceImp implements UserReviewService {
 		String rivewContent = (String)content.get("review");
 		Review newReview = new Review();
 	    newReview.create(rating, rivewContent, reservation, place, user);
-	    log.info("content : {}", content, "reservationId : {}", reservationId);
 
 	    reviewRepository.save(newReview);
 	    resultMap.put("results", newReview);
