@@ -10,6 +10,7 @@ import warriordiningback.api.restaurant.dto.PlaceSearchData;
 import warriordiningback.api.restaurant.dto.ReviewData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
 import warriordiningback.api.restaurant.service.PlaceSearchService;
+import warriordiningback.api.restaurant.service.PlaceService;
 import warriordiningback.api.restaurant.service.RestaurantService;
 import warriordiningback.domain.place.PlaceDetailInfo;
 import warriordiningback.domain.place.PlaceInfo;
@@ -31,9 +32,16 @@ public class RestaurantController {
     @Autowired
     private PlaceSearchService placeSearchService;
 
+    @Autowired
+    private PlaceService placeService;
+
     @GetMapping
-    public Page<PlaceInfo> restaurantList(@PageableDefault(size = 10) Pageable pageable) {
-        return placeRepository.findAllBy(pageable, PlaceInfo.class);
+    public Page<PlaceInfo> restaurantList(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long minPrice,
+            @RequestParam(required = false) Long maxPrice,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return placeService.filterPlaces(categoryId, minPrice, maxPrice, pageable);
     }
 
     @GetMapping("/top")
@@ -64,8 +72,11 @@ public class RestaurantController {
     @GetMapping("/search")
     public Page<PlaceSearchData> searchPlaces(
             @RequestParam String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
             @PageableDefault(size = 10) Pageable pageable) {
-        return placeSearchService.searchPlaces(keyword, pageable);
+        return placeSearchService.searchPlaces(keyword, categoryId, minPrice, maxPrice, pageable);
     }
 
 }
