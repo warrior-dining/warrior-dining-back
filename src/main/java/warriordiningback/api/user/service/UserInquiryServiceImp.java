@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import warriordiningback.api.user.dto.UserInquiryResponse;
+import warriordiningback.domain.Code;
 import warriordiningback.domain.inquiry.Inquiry;
 import warriordiningback.domain.inquiry.InquiryRepository;
 import warriordiningback.domain.user.User;
@@ -62,6 +63,27 @@ public class UserInquiryServiceImp implements UserInquiryService {
 		
 		resultMap.put("status", true);
 		resultMap.put("results", updateInquiry);
+		return resultMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> newInquiry(Map<String, Object> newInquiries) {
+		Map<String, Object> resultMap = new HashMap<>();
+		String email = (String) newInquiries.get("email");
+	    User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+		
+		String title = newInquiries.get("title").toString();
+		String content = newInquiries.get("content").toString();
+		
+		 Code defaultCode = new Code(17L);
+		 
+	    
+		Inquiry inquiry = new Inquiry();
+		inquiry.createInquiry(title, content, user, defaultCode);
+		
+		inquiryRepository.save(inquiry);
+		resultMap.put("results", inquiry);		
 		return resultMap;
 	}
 

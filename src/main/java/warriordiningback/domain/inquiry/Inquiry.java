@@ -1,17 +1,7 @@
 package warriordiningback.domain.inquiry;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -56,4 +46,10 @@ public class Inquiry extends BaseEntity {
    		this.content = content;
    	}
 	
+   	public void createInquiry(String title, String content, User user, Code code) {
+   		this.title = title;
+   		this.content = content;
+   		this.user = user;
+   		this.code = code;
+   	}
 }

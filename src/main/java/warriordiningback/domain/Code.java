@@ -19,4 +19,9 @@ public class Code {
 
     @Column(length = 100)
     private String comment;
+    
+    
+    public Code(Long id) {
+        this.id = id;
+    }
 }
