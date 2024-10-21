@@ -11,7 +11,6 @@ import warriordiningback.api.user.dto.SignUpRequest;
 import warriordiningback.api.user.dto.UserResponse;
 import warriordiningback.api.user.service.UserService;
 import warriordiningback.domain.user.User;
-import warriordiningback.domain.user.UserRepository;
 import warriordiningback.token.response.TokenResponse;
 
 @Slf4j
@@ -21,7 +20,6 @@ import warriordiningback.token.response.TokenResponse;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
     @PostMapping("/signin")
     public TokenResponse signIn(@RequestBody @Valid SignInRequest signInRequest) {

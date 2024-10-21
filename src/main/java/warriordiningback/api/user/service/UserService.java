@@ -82,6 +82,7 @@ public class UserService {
         }
     }
 
+    // Mypage 내정보
     public UserResponse getCurrentUserInfo(UserDetails userDetails) {
         User user = findUserByEmail(userDetails.getUsername());
         return UserResponse.of(user);
