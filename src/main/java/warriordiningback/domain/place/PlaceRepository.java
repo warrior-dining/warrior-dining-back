@@ -22,8 +22,24 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     <T> Page<T> findAllById(Long id, Pageable pageable, Class<T> type);
 
-    @Query("SELECT distinct p FROM Place p JOIN p.placeMenus pm WHERE " +
-            "p.name LIKE %:keyword% OR p.addressNew LIKE %:keyword% OR pm.menu LIKE %:keyword% ")
-    Page<Place> findAllByNameOrPlaceMenuOrAddressNew(@Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT DISTINCT p FROM Place p " +
+            "JOIN p.placeMenus pm " +
+            "WHERE (p.name LIKE %:keyword% OR p.addressNew LIKE %:keyword% OR pm.menu LIKE %:keyword%) " +
+            "AND (:categoryId IS NULL OR p.code.id = :categoryId) " +
+            "AND (:minPrice IS NULL OR pm.price >= :minPrice) " + // PlaceMenu의 가격 필드에 대한 최소 가격 필터
+            "AND (:maxPrice IS NULL OR pm.price <= :maxPrice)")
+        // PlaceMenu의 가격 필드에 대한 최대 가격 필터
+    Page<Place> findAllByNameOrPlaceMenuOrAddressNew(@Param("keyword") String keyword,
+                                                     @Param("categoryId") Long categoryId,
+                                                     @Param("minPrice") Double minPrice,
+                                                     @Param("maxPrice") Double maxPrice,
+                                                     Pageable pageable);
 
+    <T> Page<T> findAllByCodeId(Long codeId, Pageable pageable, Class<T> type);
+
+    @Query("SELECT p FROM Place p JOIN p.placeMenus pm WHERE pm.price BETWEEN :minPrice AND :maxPrice")
+    <T> Page<T> findAllByPriceRange(Long minPrice, Long maxPrice, Pageable pageable, Class<T> type);
+
+    @Query("SELECT p FROM Place p JOIN p.placeMenus pm WHERE p.code.id = :codeId AND pm.price BETWEEN :minPrice AND :maxPrice")
+    <T> Page<T> findAllByCategoryAndPriceRange(Long codeId, Long minPrice, Long maxPrice, Pageable pageable, Class<T> type);
 }
