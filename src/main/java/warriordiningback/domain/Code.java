@@ -3,10 +3,12 @@ package warriordiningback.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "codes")
 @Getter
+@ToString
 @NoArgsConstructor
 public class Code {
 

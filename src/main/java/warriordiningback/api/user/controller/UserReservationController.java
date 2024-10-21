@@ -1,15 +1,15 @@
 package warriordiningback.api.user.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import warriordiningback.api.user.dto.UserReservationAddRequest;
 import warriordiningback.api.user.service.UserReservationService;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/member/reservation")
 public class UserReservationController {
@@ -22,4 +22,9 @@ public class UserReservationController {
         return userReservationService.myReservationList(email, pageable);
     }
 
+    @PostMapping("/")
+    public Map<String, Object> reservationAdd(@RequestBody UserReservationAddRequest reqData){
+        log.info("reqData : {}", reqData.toString());
+        return userReservationService.reservationAdd(reqData);
+    }
 }

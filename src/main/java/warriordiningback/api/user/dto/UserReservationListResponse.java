@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import warriordiningback.domain.reservation.Reservation;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -30,8 +31,7 @@ public class UserReservationListResponse {
     
     private boolean reviewExists;
 
-    @JsonFormat(pattern = "HH:mm:ss")
-    private Date registrationTime;
+    private String reservationTime;
 
     private String orderNote;
 
@@ -44,11 +44,16 @@ public class UserReservationListResponse {
         this.placeId = reservation.getPlace().getId();
         this.placeName = reservation.getPlace().getName();
         this.count = reservation.getCount();
-        this.registrationTime = reservation.getReservationTime();
+        this.reservationTime = formatReservationTime(reservation.getReservationTime());
         this.orderNote = reservation.getOrderNote();
         this.bookMark = reservation.getUser().getBookmarks().stream()
                 .anyMatch(place -> place.getId().equals(reservation.getPlace().getId()));
         this.reviewExists = false;
+    }
+
+    private String formatReservationTime(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(date);
     }
 
 }
