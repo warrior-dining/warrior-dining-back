@@ -84,18 +84,15 @@ public class AdminInquiryServiceImp implements AdminInquiryService {
     @Transactional
     public Map<String, Object> inquiryAnswerSave(Long id, Map<String, String> content) {
         Map<String, Object> resultMap = new HashMap<>();
-        // Content 값 넣기 해야되는데.....컨텐츠, 인쿼리 객체, 유저정보(답변을 작성하는 관리자 정보)
         Inquiry updateInquiryStatus = inquiryRepository.findById(id).orElseThrow(() -> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
 
-        // 로그인기능 구현시 꼭!! findById 수정
-        User user = userRepository.findById(1L).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        String email = content.get("email").toString();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content"), updateInquiryStatus, user);
         saveAnswer = answerRepository.save(saveAnswer);
 
-        //inquiry를 여기서 다시 불러서 상태값 처리됨으로 업데이트
         Code answerCode = codeRepository.findById(16L).orElseThrow(()-> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
         updateInquiryStatus.updateCode(answerCode);
-        inquiryRepository.save(updateInquiryStatus);
 
         resultMap.put("status", true);
         resultMap.put("results", updateInquiryStatus);
