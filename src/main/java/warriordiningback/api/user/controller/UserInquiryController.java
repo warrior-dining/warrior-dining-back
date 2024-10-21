@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,11 @@ public class UserInquiryController {
 	@PutMapping("/{id:[0-9]+}")
 	public Map<String, Object> inquiryInfoEdit(@PathVariable("id") Long id, @RequestBody Map<String, Object> inquiry){
 		return inquiryService.inquiryInfoEdit(id, inquiry);
+	}
+	
+	@PostMapping("/")
+	public Map<String, Object> newInquiry(@RequestBody Map<String, Object> newInquiries) {
+		return inquiryService.newInquiry(newInquiries);
 	}
 	
 }
