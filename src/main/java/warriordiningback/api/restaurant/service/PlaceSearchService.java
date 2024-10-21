@@ -18,20 +18,21 @@ public class PlaceSearchService {
 
     private final PlaceRepository placeRepository;
 
-    public Page<PlaceSearchData> searchPlaces(String keyword, Pageable pageable) {
-        Page<Place> places = placeRepository.findAllByNameOrPlaceMenuOrAddressNew(keyword, pageable);
+    public Page<PlaceSearchData> searchPlaces(String keyword, Long categoryId, Double minPrice, Double maxPrice, Pageable pageable) {
+        Page<Place> places = placeRepository.findAllByNameOrPlaceMenuOrAddressNew(keyword, categoryId, minPrice, maxPrice, pageable);
 
-        // Page 객체 자체에서 map()을 사용하여 Place -> PlaceSearchDto 변환
         return places.map(place -> new PlaceSearchData(
                 place.getId(),
                 place.getName(),
                 place.getComment(),
                 place.getAddressNew(),
-                place.getPlaceMenus().stream().map(PlaceMenu::getMenu)  // 메뉴 이름을 가져옴
-                        .collect(Collectors.joining(", ")), // 여러 메뉴 이름을 ','로 연결
+                place.getPlaceMenus().stream().map(PlaceMenu::getMenu)
+                        .collect(Collectors.joining(", ")),
                 place.getPlaceFiles().stream().map(PlaceFile::getUrl)
-                        .collect(Collectors.toList())
-
+                        .collect(Collectors.toList()),
+                place.getCode().getId(),
+                null, // 가격은 필요에 따라 설정
+                null  // 가격은 필요에 따라 설정
         ));
     }
 

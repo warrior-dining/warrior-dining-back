@@ -15,4 +15,7 @@ public class PlaceSearchData {
     private String addressNew;
     private String menu;
     private List<String> url;
+    private Long categoryId;
+    private Double minPrice;
+    private Double maxPrice;
 }

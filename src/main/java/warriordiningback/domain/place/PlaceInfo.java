@@ -12,9 +12,20 @@ public interface PlaceInfo {
 
     List<PlaceFileInfo> getPlaceFiles();
 
+    CodeInfo getCode();
+
+    List<PlaceMenuInfo> getPlaceMenus();
+
     interface PlaceFileInfo {
         String getUrl();
+    }
 
+    interface CodeInfo {
+        Long getId();
+    }
+
+    interface PlaceMenuInfo {
+        Long getPrice();
     }
 
 }
