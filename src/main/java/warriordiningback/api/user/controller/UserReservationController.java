@@ -27,4 +27,9 @@ public class UserReservationController {
         log.info("reqData : {}", reqData.toString());
         return userReservationService.reservationAdd(reqData);
     }
+
+    @GetMapping("/{reservationId:[0-9]+}")
+    public Map<String, Object> myReservationInfo(@PathVariable("reservationId") Long reservationId){
+        return userReservationService.myReservationInfo(reservationId);
+    }
 }

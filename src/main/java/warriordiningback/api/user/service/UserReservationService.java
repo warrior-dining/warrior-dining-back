@@ -9,4 +9,5 @@ public interface UserReservationService {
 
     public Map<String, Object> myReservationList(String email, Pageable pageable);
     public Map<String, Object> reservationAdd(UserReservationAddRequest reqData);
+    public Map<String, Object> myReservationInfo(Long reservationId);
 }

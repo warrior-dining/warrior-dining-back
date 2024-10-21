@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserReservationAddRequest;
+import warriordiningback.api.user.dto.UserReservationInfoResponse;
 import warriordiningback.api.user.dto.UserReservationListResponse;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
@@ -98,6 +99,36 @@ public class UserReservationServiceImp implements UserReservationService{
             };
         } else {
             resultMap.put("comment", "실패다.");
+        }
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> myReservationInfo(Long reservationId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("status", false);
+
+        if(reservationId != null){
+            Reservation reservationInfo = reservationRepository.findById(reservationId).orElseThrow(()-> new DiningApplicationException(ErrorCode.RESERVATION_NOT_FOUND));
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+            String formattedDate = dateFormat.format(reservationInfo.getReservationDate());
+            String formattedTime = timeFormat.format(reservationInfo.getReservationTime());
+
+            UserReservationInfoResponse userReservationInfo =
+                    new UserReservationInfoResponse(reservationInfo.getId(),
+                                                    reservationInfo.getPlace().getName(),
+                                                    reservationInfo.getPlace().getStartTime(),
+                                                    reservationInfo.getPlace().getEndTime(),
+                                                    formattedDate,
+                                                    formattedTime,
+                                                    reservationInfo.getCount(),
+                                                    reservationInfo.getOrderNote());
+            resultMap.put("status", true);
+            resultMap.put("results", userReservationInfo);
+        } else {
+            resultMap.put("comment", "예약 번호가 없습니다.");
         }
         return resultMap;
     }
