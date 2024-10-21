@@ -26,9 +26,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             "JOIN p.placeMenus pm " +
             "WHERE (p.name LIKE %:keyword% OR p.addressNew LIKE %:keyword% OR pm.menu LIKE %:keyword%) " +
             "AND (:categoryId IS NULL OR p.code.id = :categoryId) " +
-            "AND (:minPrice IS NULL OR pm.price >= :minPrice) " + // PlaceMenu의 가격 필드에 대한 최소 가격 필터
+            "AND (:minPrice IS NULL OR pm.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR pm.price <= :maxPrice)")
-        // PlaceMenu의 가격 필드에 대한 최대 가격 필터
     Page<Place> findAllByNameOrPlaceMenuOrAddressNew(@Param("keyword") String keyword,
                                                      @Param("categoryId") Long categoryId,
                                                      @Param("minPrice") Double minPrice,
