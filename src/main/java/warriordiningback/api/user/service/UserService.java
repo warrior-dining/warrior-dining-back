@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.SignInRequest;
+import warriordiningback.api.user.dto.UserResponse;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.user.Role;
@@ -36,8 +37,7 @@ public class UserService {
     private final CustomUserDetailsService customUserDetailsService;
 
     public TokenResponse signIn(SignInRequest signInRequest) {
-        User user = userRepository.findByEmail(signInRequest.getEmail())
-                .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        User user = findUserByEmail(signInRequest.getEmail());
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
             throw new DiningApplicationException(ErrorCode.INVALID_PASSWORD);
         }
@@ -82,4 +82,16 @@ public class UserService {
         }
     }
 
+    public UserResponse getCurrentUserInfo(UserDetails userDetails) {
+        User user = findUserByEmail(userDetails.getUsername());
+        return UserResponse.of(user);
+    }
+
+    // 유저 이메일 조회 메서드 입니다.
+    // 중복으로 사용되어 해당 서비스내에서 재사용하도록 private으로 생성하였습니다.
+    // 다른 Service에서 사용 시 public으로 변경하여 사용하셔도 됩니다.
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+    }
 }
