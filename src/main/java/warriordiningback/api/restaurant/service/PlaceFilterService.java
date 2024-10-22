@@ -10,7 +10,7 @@ import warriordiningback.domain.place.PlaceRepository;
 
 @Service
 @RequiredArgsConstructor
-public class PlaceService {
+public class PlaceFilterService {
 
     @Autowired
     private PlaceRepository placeRepository;
@@ -30,7 +30,7 @@ public class PlaceService {
         }
         // 필터 조건이 없을 경우 전체 데이터 반환
         else {
-            return placeRepository.findAllBy(pageable, PlaceInfo.class);
+            return placeRepository.findAllByOrderByNameAsc(pageable, PlaceInfo.class);
         }
     }
 }
