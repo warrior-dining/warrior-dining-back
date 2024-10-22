@@ -82,13 +82,13 @@ public class AdminInquiryServiceImp implements AdminInquiryService {
 
     @Override
     @Transactional
-    public Map<String, Object> inquiryAnswerSave(Long id, Map<String, String> content) {
+    public Map<String, Object> inquiryAnswerSave(Long id, Map<String, Object> content) {
         Map<String, Object> resultMap = new HashMap<>();
         Inquiry updateInquiryStatus = inquiryRepository.findById(id).orElseThrow(() -> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
 
         String email = content.get("email").toString();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-        InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content"), updateInquiryStatus, user);
+        InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content").toString(), updateInquiryStatus, user);
         saveAnswer = answerRepository.save(saveAnswer);
 
         Code answerCode = codeRepository.findById(16L).orElseThrow(()-> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
