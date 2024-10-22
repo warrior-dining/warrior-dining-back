@@ -58,7 +58,7 @@ public class AdminInquiryController {
 	
 	
 	@PostMapping("/{id:[0-9]+}")
-	public Map<String, Object> inquiryAnswerSave(@PathVariable("id") Long id, @RequestBody Map<String, String> content) {
+	public Map<String, Object> inquiryAnswerSave(@PathVariable("id") Long id, @RequestBody Map<String, Object> content) {
 		return adminInquiryService.inquiryAnswerSave(id, content);
 	}
 }
