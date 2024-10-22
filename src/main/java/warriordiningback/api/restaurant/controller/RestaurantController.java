@@ -9,9 +9,9 @@ import warriordiningback.api.restaurant.dto.MonthReservationData;
 import warriordiningback.api.restaurant.dto.PlaceSearchData;
 import warriordiningback.api.restaurant.dto.ReviewData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
+import warriordiningback.api.restaurant.service.PlaceFilterService;
+import warriordiningback.api.restaurant.service.PlaceRatingService;
 import warriordiningback.api.restaurant.service.PlaceSearchService;
-import warriordiningback.api.restaurant.service.PlaceService;
-import warriordiningback.api.restaurant.service.RestaurantService;
 import warriordiningback.domain.place.PlaceDetailInfo;
 import warriordiningback.domain.place.PlaceInfo;
 import warriordiningback.domain.place.PlaceRepository;
@@ -27,13 +27,13 @@ public class RestaurantController {
     private PlaceRepository placeRepository;
 
     @Autowired
-    private RestaurantService restaurantService;
+    private PlaceRatingService placeRatingService;
 
     @Autowired
     private PlaceSearchService placeSearchService;
 
     @Autowired
-    private PlaceService placeService;
+    private PlaceFilterService placeFilterService;
 
     @GetMapping
     public Page<PlaceInfo> restaurantList(
@@ -41,12 +41,12 @@ public class RestaurantController {
             @RequestParam(required = false) Long minPrice,
             @RequestParam(required = false) Long maxPrice,
             @PageableDefault(size = 10) Pageable pageable) {
-        return placeService.filterPlaces(categoryId, minPrice, maxPrice, pageable);
+        return placeFilterService.filterPlaces(categoryId, minPrice, maxPrice, pageable);
     }
 
     @GetMapping("/top")
     public List<TopReservationData> getTopReservations() {
-        return restaurantService.findTop10Places();
+        return placeRatingService.findTop10Places();
     }
 
     @GetMapping("/month")
@@ -54,12 +54,12 @@ public class RestaurantController {
             @RequestParam(value = "year", required = false) Integer year,
             @RequestParam(value = "month", required = false) Integer month) {
 
-        return restaurantService.findMonthPlaces(year, month);
+        return placeRatingService.findMonthPlaces(year, month);
     }
 
     @GetMapping("reviews")
     public List<ReviewData> restaurantReviews() {
-        return restaurantService.findByReview();
+        return placeRatingService.findByReview();
     }
 
     @GetMapping("/{id}")
