@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserReservationAddRequest;
+import warriordiningback.api.user.dto.UserReservationEditRequest;
 import warriordiningback.api.user.dto.UserReservationInfoResponse;
 import warriordiningback.api.user.dto.UserReservationListResponse;
 import warriordiningback.domain.Code;
@@ -60,7 +61,6 @@ public class UserReservationServiceImp implements UserReservationService{
             myReservation.setReviewExists(reviewExists); // 리뷰 존재 여부 설정
             userReservationListResponse.add(myReservation);
         }
-        log.info(" 예약 리스트 : {}", userReservationListResponse);
         Page<UserReservationListResponse> results = new PageImpl<>(userReservationListResponse, myReservations.getPageable(), myReservations.getTotalElements());
 
         resultMap.put("status", true);
@@ -127,6 +127,34 @@ public class UserReservationServiceImp implements UserReservationService{
                                                     reservationInfo.getOrderNote());
             resultMap.put("status", true);
             resultMap.put("results", userReservationInfo);
+        } else {
+            resultMap.put("comment", "예약 번호가 없습니다.");
+        }
+        return resultMap;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> myreservationEdit(Long reservationId, UserReservationEditRequest reqData) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("status", false);
+
+        if(reservationId != null){
+            Reservation reservationInfo = reservationRepository.findById(reservationId).orElseThrow(()-> new DiningApplicationException(ErrorCode.RESERVATION_NOT_FOUND));
+
+            /* Reservation Entity에 맞춰 날짜, 시간 타입 포맷 변경. 추후에 엔티티 수정시 같이 수정할 것 */
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                Date reservationDate = dateFormat.parse(reqData.getReservationDate());
+                Date reservationTime = dateTimeFormat.parse(reqData.getReservationTime());
+
+                reservationInfo.edit(reservationDate, reservationTime, reqData.getCount(), reqData.getOrderNote());
+                resultMap.put("status", true);
+                resultMap.put("results", reservationInfo);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         } else {
             resultMap.put("comment", "예약 번호가 없습니다.");
         }

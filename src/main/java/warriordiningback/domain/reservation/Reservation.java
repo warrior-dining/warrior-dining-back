@@ -60,4 +60,11 @@ public class Reservation extends BaseEntity {
 		this.code = code;
 	}
 
+	public void edit(Date reservationDate, Date reservationTime, int count, String orderNote){
+		this.reservationDate = reservationDate;
+		this.reservationTime = reservationTime;
+		this.count = count;
+		this.orderNote = orderNote;
+	}
+
 }

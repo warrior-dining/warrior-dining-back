@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.user.dto.UserReservationAddRequest;
+import warriordiningback.api.user.dto.UserReservationEditRequest;
 import warriordiningback.api.user.service.UserReservationService;
 
 import java.util.Map;
@@ -31,5 +32,11 @@ public class UserReservationController {
     @GetMapping("/{reservationId:[0-9]+}")
     public Map<String, Object> myReservationInfo(@PathVariable("reservationId") Long reservationId){
         return userReservationService.myReservationInfo(reservationId);
+    }
+
+    @PutMapping("/{reservationId:[0-9]+}")
+    public Map<String, Object> myReservationEdit(@PathVariable("reservationId") Long reservationId, @RequestBody UserReservationEditRequest reqData){
+        log.info("reqData : {}", reqData);
+        return userReservationService.myreservationEdit(reservationId, reqData);
     }
 }
