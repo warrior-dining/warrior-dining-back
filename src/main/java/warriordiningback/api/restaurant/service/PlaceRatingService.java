@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
-import warriordiningback.api.restaurant.dto.ReviewData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
 import warriordiningback.domain.reservation.ReservationRepository;
-import warriordiningback.domain.review.ReviewRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,9 +20,6 @@ public class PlaceRatingService {
 
     @Autowired
     private ReservationRepository reservationRepository;
-
-    @Autowired
-    private ReviewRepository reviewRepository;
 
     public List<TopReservationData> findTop10Places() {
         return reservationRepository.findTop10Places();
@@ -44,10 +39,5 @@ public class PlaceRatingService {
 
         return reservationRepository.findMonthPlaces(year, month);
     }
-
-    public List<ReviewData> findByReview() {
-        return reviewRepository.findAllReviewData();
-    }
-
 
 }

@@ -12,6 +12,7 @@ import warriordiningback.api.restaurant.dto.ReviewData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
 import warriordiningback.api.restaurant.service.PlaceFilterService;
 import warriordiningback.api.restaurant.service.PlaceRatingService;
+import warriordiningback.api.restaurant.service.PlaceReviewService;
 import warriordiningback.api.restaurant.service.PlaceSearchService;
 import warriordiningback.domain.place.PlaceDetailInfo;
 import warriordiningback.domain.place.PlaceInfo;
@@ -35,6 +36,9 @@ public class RestaurantController implements RestaurantControllerDocs {
 
     @Autowired
     private PlaceFilterService placeFilterService;
+
+    @Autowired
+    private PlaceReviewService placeReviewService;
 
     @GetMapping
     public Page<PlaceInfo> restaurantList(
@@ -60,7 +64,7 @@ public class RestaurantController implements RestaurantControllerDocs {
 
     @GetMapping("reviews")
     public List<ReviewData> restaurantReviews() {
-        return placeRatingService.findByReview();
+        return placeReviewService.findByReview();
     }
 
     @GetMapping("/{id}")
