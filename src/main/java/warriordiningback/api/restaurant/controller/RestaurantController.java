@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurant")
-public class RestaurantController {
+public class RestaurantController implements RestaurantControllerDocs {
 
     @Autowired
     private PlaceRepository placeRepository;
