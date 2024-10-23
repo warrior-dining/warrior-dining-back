@@ -104,7 +104,7 @@ public class UserService {
     }
 
     // 유저 이메일 조회
-    private User findUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
     }

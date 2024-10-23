@@ -1,18 +1,16 @@
 package warriordiningback.api.admin.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import warriordiningback.domain.Code;
-import warriordiningback.domain.CodeRepository;
+import warriordiningback.api.code.CodeService;
+import warriordiningback.api.user.service.UserService;
 import warriordiningback.domain.inquiry.InquiriesAnswer;
 import warriordiningback.domain.inquiry.InquiriesAnswerRepository;
 import warriordiningback.domain.inquiry.Inquiry;
 import warriordiningback.domain.inquiry.InquiryRepository;
-import warriordiningback.domain.user.User;
-import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
@@ -23,58 +21,44 @@ import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AdminInquiryServiceImp implements AdminInquiryService {
 
-    @Autowired
-    private InquiryRepository inquiryRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private InquiriesAnswerRepository answerRepository;
-
-    @Autowired
-    private CodeRepository codeRepository;
+    private final InquiryRepository inquiryRepository;
+    private final InquiriesAnswerRepository answerRepository;
+    private final UserService userService;
+    private final CodeService codeService;
 
     @Override
     public Map<String, Object> inquiryList(String searchType, String searchKeyword, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Inquiry> searchInquirys;
+        Page<Inquiry> searchInquiries;
         resultMap.put("status", false);
 
-        if(searchKeyword != null && !searchKeyword.isEmpty()) {
-            switch (searchType) {
-                case "title":
-                    searchInquirys = inquiryRepository.findAllByTitleContainingOrderByCreatedAtDesc(searchKeyword, pageable);
-                    break;
-                case "date":
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            searchInquiries = switch (searchType) {
+                case "title" -> inquiryRepository.findAllByTitleContainingOrderByCreatedAtDesc(searchKeyword, pageable);
+                case "date" -> {
                     LocalDate date = LocalDate.parse(searchKeyword, DateTimeFormatter.ISO_LOCAL_DATE);
-                    searchInquirys = inquiryRepository.findAllByCreatedAtContainingOrderByCreatedAtDesc(date, pageable);
-                    break;
-                case "user":
-                    searchInquirys = inquiryRepository.findAllByUserName(searchKeyword, pageable);
-                    break;
-                case "status":
-                    searchInquirys = inquiryRepository.findAllByCodeValue(searchKeyword, pageable);
-                    break;
-                default:
-                    searchInquirys = inquiryRepository.findAllByOrderByCreatedAtDesc(pageable);
-                    break;
-            }
+                    yield inquiryRepository.findAllByCreatedAtContainingOrderByCreatedAtDesc(date, pageable);
+                }
+                case "user" -> inquiryRepository.findAllByUserName(searchKeyword, pageable);
+                case "status" -> inquiryRepository.findAllByCodeValue(searchKeyword, pageable);
+                default -> inquiryRepository.findAllByOrderByCreatedAtDesc(pageable);
+            };
             resultMap.put("status", true);
         } else {
-            searchInquirys =  inquiryRepository.findAllByOrderByCreatedAtDesc(pageable);
+            searchInquiries = inquiryRepository.findAllByOrderByCreatedAtDesc(pageable);
             resultMap.put("status", true);
         }
-        resultMap.put("results", searchInquirys);
+        resultMap.put("results", searchInquiries);
         return resultMap;
     }
 
     @Override
     public Map<String, Object> inquiryInfo(Long id) {
         Map<String, Object> resultMap = new HashMap<>();
-        Inquiry inquiry = inquiryRepository.findById(id).orElseThrow(() -> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
+        Inquiry inquiry = findInquiryById(id);
         resultMap.put("status", true);
         resultMap.put("results", inquiry);
         return resultMap;
@@ -84,18 +68,22 @@ public class AdminInquiryServiceImp implements AdminInquiryService {
     @Transactional
     public Map<String, Object> inquiryAnswerSave(Long id, Map<String, Object> content) {
         Map<String, Object> resultMap = new HashMap<>();
-        Inquiry updateInquiryStatus = inquiryRepository.findById(id).orElseThrow(() -> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
+        Inquiry updateInquiryStatus = findInquiryById(id);
 
         String email = content.get("email").toString();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-        InquiriesAnswer saveAnswer = InquiriesAnswer.create(content.get("content").toString(), updateInquiryStatus, user);
-        saveAnswer = answerRepository.save(saveAnswer);
+        InquiriesAnswer saveAnswer = InquiriesAnswer.create(
+                content.get("content").toString(), updateInquiryStatus, userService.findUserByEmail(email)
+        );
+        answerRepository.save(saveAnswer);
 
-        Code answerCode = codeRepository.findById(16L).orElseThrow(()-> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
-        updateInquiryStatus.updateCode(answerCode);
-
+        updateInquiryStatus.updateCode(codeService.findCodeById(16L));
         resultMap.put("status", true);
         resultMap.put("results", updateInquiryStatus);
         return resultMap;
+    }
+
+    private Inquiry findInquiryById(Long id) {
+        return inquiryRepository.findById(id).orElseThrow(()
+                -> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
     }
 }

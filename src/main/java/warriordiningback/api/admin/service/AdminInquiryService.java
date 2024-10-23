@@ -6,7 +6,9 @@ import java.util.Map;
 
 public interface AdminInquiryService {
 
-    public Map<String, Object> inquiryList(String searchType, String searchKeyword, Pageable pageable);
-    public Map<String, Object> inquiryInfo(Long id);
-    public Map<String, Object> inquiryAnswerSave(Long id, Map<String, Object> content);
+    Map<String, Object> inquiryList(String searchType, String searchKeyword, Pageable pageable);
+
+    Map<String, Object> inquiryInfo(Long id);
+
+    Map<String, Object> inquiryAnswerSave(Long id, Map<String, Object> content);
 }
