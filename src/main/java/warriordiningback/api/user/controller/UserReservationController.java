@@ -25,7 +25,6 @@ public class UserReservationController {
 
     @PostMapping("/")
     public Map<String, Object> reservationAdd(@RequestBody UserReservationAddRequest reqData){
-        log.info("reqData : {}", reqData.toString());
         return userReservationService.reservationAdd(reqData);
     }
 
@@ -36,7 +35,11 @@ public class UserReservationController {
 
     @PutMapping("/{reservationId:[0-9]+}")
     public Map<String, Object> myReservationEdit(@PathVariable("reservationId") Long reservationId, @RequestBody UserReservationEditRequest reqData){
-        log.info("reqData : {}", reqData);
         return userReservationService.myreservationEdit(reservationId, reqData);
+    }
+
+    @DeleteMapping("/{reservationId:[0-9]+}")
+    public Map<String, Object> myReservationDelete(@PathVariable("reservationId") Long reservationId){
+        return userReservationService.myReservationDelete(reservationId);
     }
 }

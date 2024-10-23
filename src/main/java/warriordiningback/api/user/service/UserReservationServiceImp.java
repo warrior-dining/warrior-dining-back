@@ -161,4 +161,21 @@ public class UserReservationServiceImp implements UserReservationService{
         return resultMap;
     }
 
+    @Override
+    @Transactional
+    public Map<String, Object> myReservationDelete(Long reservationId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("status", false);
+
+        if(reservationId != null){
+            Reservation reservationInfo = reservationRepository.findById(reservationId).orElseThrow(()-> new DiningApplicationException(ErrorCode.RESERVATION_NOT_FOUND));
+            Code cancel = codeRepository.findById(13L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+            reservationInfo.updateStatus(cancel);
+
+            resultMap.put("status", true);
+            resultMap.put("results", reservationInfo);
+        }
+        return resultMap;
+    }
+
 }
