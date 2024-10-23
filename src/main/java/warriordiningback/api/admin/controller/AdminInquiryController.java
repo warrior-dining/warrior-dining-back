@@ -15,7 +15,7 @@ public class AdminInquiryController {
 
     private final AdminInquiryService adminInquiryService;
 
-    @GetMapping("/")
+    @GetMapping
     public Map<String, Object> inquiryList(@RequestParam(name = "type", required = false) String searchType,
                                            @RequestParam(name = "keyword", required = false) String searchKeyword, Pageable pageable) {
         return adminInquiryService.inquiryList(searchType, searchKeyword, pageable);
@@ -25,7 +25,6 @@ public class AdminInquiryController {
     public Map<String, Object> inquiryInfo(@PathVariable(name = "id") Long id) {
         return adminInquiryService.inquiryInfo(id);
     }
-
 
     @PostMapping("/{id:[0-9]+}")
     public Map<String, Object> inquiryAnswerSave(@PathVariable("id") Long id, @RequestBody Map<String, Object> content) {
