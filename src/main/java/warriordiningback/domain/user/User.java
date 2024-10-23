@@ -2,6 +2,7 @@ package warriordiningback.domain.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Table(name = "users")
+@NoArgsConstructor
 public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, length = 50)
@@ -27,6 +29,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(length = 100)
     private String password;
+
+    @Transient
+    private String newPassword;
 
     @Column(nullable = false, length = 50)
     private String birth;
@@ -57,9 +62,29 @@ public class User extends BaseEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "place_id"))
     private Set<Place> bookmarks = new HashSet<>();
 
+    // 유저 정보 수정 생성자
+    public User(String email, String phone, String password, String newPassword) {
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.newPassword = newPassword;
+    }
+
+    // 유저 생성 생성자
+    public User(String email, String password, String name, String birth, String phone, boolean isUsed, Code gender, Code flag) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.birth = birth;
+        this.phone = phone;
+        this.isUsed = isUsed;
+        this.gender = gender;
+        this.flag = flag;
+    }
+
     /* 비즈니스 로직 */
     public static User create(String email, String password, String name, String birth, String phone, Code gender, Code flag) {
-        User user = new User();
+        User user = new User(email, password, name, birth, phone, true, gender, flag);
         user.email = email;
         user.password = password;
         user.name = name;
@@ -81,6 +106,11 @@ public class User extends BaseEntity implements UserDetails {
         user.gender = gender;
         user.flag = flag;
         return user;
+    }
+
+    public void edit(String phone, String encodedPassword) {
+        this.phone = phone;
+        this.password = encodedPassword;
     }
     /* ========== */
 

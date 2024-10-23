@@ -27,6 +27,7 @@ public class UserResponse {
     private LocalDateTime updatedAt;
 
     private boolean status;
+    private Long flag;
 
     public static UserResponse of(User user) {
         return UserResponse.builder()
@@ -39,6 +40,7 @@ public class UserResponse {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .status(true)
+                .flag(user.getFlag().getId())
                 .build();
     }
 }
