@@ -70,21 +70,9 @@ public class User extends BaseEntity implements UserDetails {
         this.newPassword = newPassword;
     }
 
-    // 유저 생성 생성자
-    public User(String email, String password, String name, String birth, String phone, boolean isUsed, Code gender, Code flag) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.birth = birth;
-        this.phone = phone;
-        this.isUsed = isUsed;
-        this.gender = gender;
-        this.flag = flag;
-    }
-
     /* 비즈니스 로직 */
     public static User create(String email, String password, String name, String birth, String phone, Code gender, Code flag) {
-        User user = new User(email, password, name, birth, phone, true, gender, flag);
+        User user = new User();
         user.email = email;
         user.password = password;
         user.name = name;
