@@ -52,7 +52,7 @@ public class TokenProvider {
                 .subject(authentication.getName())
                 .issuer("ACCESS")
                 .claim("auth", authorities)
-                .expiration(getDate(1))
+                .expiration(getDate(30))
                 .issuedAt(Calendar.getInstance().getTime())
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();

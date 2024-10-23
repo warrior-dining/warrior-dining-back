@@ -18,8 +18,7 @@ public class UserReservationListResponse {
 
     private Long id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date reservationDate;
+    private String reservationDate;
 
     private String reservationStatus;
 
@@ -39,7 +38,7 @@ public class UserReservationListResponse {
 
     public UserReservationListResponse(Reservation reservation) {
         this.id = reservation.getId();
-        this.reservationDate = reservation.getReservationDate();
+        this.reservationDate = formatReservationDate(reservation.getReservationDate());
         this.reservationStatus = reservation.getCode().getValue();
         this.placeId = reservation.getPlace().getId();
         this.placeName = reservation.getPlace().getName();
@@ -53,6 +52,11 @@ public class UserReservationListResponse {
 
     private String formatReservationTime(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(date);
+    }
+
+    private String formatReservationDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
     }
 
