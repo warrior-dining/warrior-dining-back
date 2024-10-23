@@ -1,18 +1,10 @@
 package warriordiningback.domain.reservation;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
+import lombok.ToString;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -20,10 +12,10 @@ import lombok.Getter;
 import warriordiningback.domain.BaseEntity;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.place.Place;
-import warriordiningback.domain.reservation.Reservation;
 import warriordiningback.domain.user.User;
 
 @Getter
+@ToString
 @Entity
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
@@ -33,7 +25,7 @@ public class Reservation extends BaseEntity {
 	private Date reservationDate;
 	
 	@Column(name = "reservation_time", nullable = false)
-	@JsonFormat(pattern = "HH:mm:ss")
+	@JsonFormat(pattern = "HH:mm")
 	private Date reservationTime;
 	
 	@Column(nullable = false)
@@ -57,5 +49,22 @@ public class Reservation extends BaseEntity {
 	public void updateStatus(Code code) {
 		this.code = code;
 	}
-	
+
+	public void create(Date reservationDate, Date reservationTime, int count, String orderNote, User user, Place place, Code code) {
+		this.reservationDate = reservationDate;
+		this.reservationTime = reservationTime;
+		this.count = count;
+		this.orderNote = orderNote;
+		this.user = user;
+		this.place = place;
+		this.code = code;
+	}
+
+	public void edit(Date reservationDate, Date reservationTime, int count, String orderNote){
+		this.reservationDate = reservationDate;
+		this.reservationTime = reservationTime;
+		this.count = count;
+		this.orderNote = orderNote;
+	}
+
 }

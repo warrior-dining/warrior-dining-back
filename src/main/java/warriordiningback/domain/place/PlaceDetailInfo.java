@@ -10,6 +10,12 @@ public interface PlaceDetailInfo {
 
     String getComment();
 
+    String getStartTime();
+
+    String getEndTime();
+
+    String getOffDay();
+
     List<PlaceFileInfo> getPlaceFiles();
     List<PlaceMenu> getPlaceMenus();
     List<ReviewInfo> getReviews();
