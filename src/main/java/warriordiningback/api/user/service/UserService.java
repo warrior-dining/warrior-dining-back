@@ -36,12 +36,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService customUserDetailsService;
 
+    // 로그인
     public TokenResponse signIn(SignInRequest signInRequest) {
         User user = findUserByEmail(signInRequest.getEmail());
-        if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            throw new DiningApplicationException(ErrorCode.INVALID_PASSWORD);
-        }
-
+        matchesPassword(signInRequest.getPassword(), user.getPassword());
         // 1. email + password를 기반으로 Authentication 객체 생성
         // 이때 authentication은 인증 여부를 확인하는 authenticated 값이 false
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(signInRequest.getEmail());
@@ -57,6 +55,7 @@ public class UserService {
         return tokenProvider.generateToken(authentication);
     }
 
+    // 회원가입
     @Transactional
     public User signUp(String email, String password, String name, String birth, String phone, Long gender) {
         validateUser(email);
@@ -66,7 +65,7 @@ public class UserService {
         Code flagCode = codeRepository.findById(1L).orElseThrow(
                 () -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
 
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = encodedPassword(password);
         User savedUser = User.create(email, encodedPassword, name, birth, phone, genderCode, flagCode);
 
         Role defaultRole = roleRepository.findById(1L).orElseThrow(
@@ -76,23 +75,51 @@ public class UserService {
         return userRepository.save(savedUser);
     }
 
-    public void validateUser(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new DiningApplicationException(ErrorCode.DUPLICATED_USER_ID);
-        }
-    }
-
     // Mypage 내정보
     public UserResponse getCurrentUserInfo(UserDetails userDetails) {
         User user = findUserByEmail(userDetails.getUsername());
         return UserResponse.of(user);
     }
 
-    // 유저 이메일 조회 메서드 입니다.
+    // 정보 수정
+    @Transactional
+    public User editUserInfo(String email, User user) {
+        User existingMember = findUserByEmail(email);
+        matchesPassword(user.getPassword(), existingMember.getPassword());
+        String encodedPassword = (user.getNewPassword() != null && !user.getNewPassword().isEmpty())
+                ? encodedPassword(user.getNewPassword()) : existingMember.getPassword();
+        existingMember.edit(user.getPhone(), encodedPassword);
+        return existingMember;
+    }
+
+    /* ===== 재사용 처리 메서드 ===== */
     // 중복으로 사용되어 해당 서비스내에서 재사용하도록 private으로 생성하였습니다.
     // 다른 Service에서 사용 시 public으로 변경하여 사용하셔도 됩니다.
+
+    // 중복회원 검증
+    private void validateUser(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new DiningApplicationException(ErrorCode.DUPLICATED_USER_ID);
+        }
+    }
+
+    // 유저 이메일 조회
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
     }
+
+    // 비밀번호 encode
+    private String encodedPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
+    // 비밀번호 요청 비밀번호와 DB 비밀번호 매치 확인
+    private void matchesPassword(String password, String encodedPassword) {
+        if (!passwordEncoder.matches(password, encodedPassword)) {
+            throw new DiningApplicationException(ErrorCode.INVALID_PASSWORD);
+        }
+    }
+
+    /* ========== */
 }

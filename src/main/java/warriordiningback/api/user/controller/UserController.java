@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.user.dto.SignInRequest;
 import warriordiningback.api.user.dto.SignUpRequest;
+import warriordiningback.api.user.dto.UserEditRequest;
 import warriordiningback.api.user.dto.UserResponse;
 import warriordiningback.api.user.service.UserService;
 import warriordiningback.domain.user.User;
@@ -39,5 +40,12 @@ public class UserController {
     @GetMapping
     public UserResponse currentUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         return userService.getCurrentUserInfo(userDetails);
+    }
+
+    @PutMapping
+    public UserResponse editUserInfo(@RequestBody UserEditRequest userEditRequest,
+                                     @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.editUserInfo(userDetails.getUsername(), userEditRequest.toEntity());
+        return UserResponse.of(user);
     }
 }
