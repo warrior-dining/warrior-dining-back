@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import warriordiningback.api.restaurant.docs.RestaurantControllerDocs;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
 import warriordiningback.api.restaurant.dto.PlaceSearchData;
 import warriordiningback.api.restaurant.dto.ReviewData;
