@@ -18,4 +18,6 @@ public class UserReservationAddRequest {
     private int count;
 
     private String orderNote;
+
+
 }
