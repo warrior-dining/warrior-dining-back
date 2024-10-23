@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
-    <T> Page<T> findAllBy(Pageable pageable, Class<T> type); // 제네릭 메서드
+    <T> Page<T> findAllByOrderByNameAsc(Pageable pageable, Class<T> type); // 제네릭 메서드
 
     Page<Place> findAllByOrderByNameAsc(Pageable pageable);
 

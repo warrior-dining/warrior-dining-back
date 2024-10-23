@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RestaurantService {
+public class PlaceRatingService {
 
     @Autowired
     private ReservationRepository reservationRepository;
