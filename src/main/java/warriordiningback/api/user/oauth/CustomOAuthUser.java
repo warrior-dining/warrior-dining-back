@@ -17,6 +17,7 @@ import java.util.Set;
 public class CustomOAuthUser implements OAuth2User {
 
     private User user;
+    private Long flag;
 
     @Override
     public Map<String, Object> getAttributes() {

@@ -17,6 +17,7 @@ import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,9 +65,35 @@ public class OAuthService extends DefaultOAuth2UserService {
         Long newGender = null;
         Code flagCode = null;
         if (email != null) {
-            if (userRepository.existsByEmail(email)) {
-                user = userRepository.findByEmail(email).orElseThrow(
-                        () -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+            Optional<User> existingUser = userRepository.findByEmailAndIsUsedTrue(email);
+
+            if (existingUser.isPresent()) {
+                user = existingUser.get();
+
+                if (!user.isUsed()) {
+                    if (gender.equals("male") || gender.equals("M")) {
+                        newGender = 3L;
+                    } else if (gender.equals("female") || gender.equals("F")) {
+                        newGender = 4L;
+                    }
+
+                    if (oAuthClientName.equals("kakao")) {
+                        flagCode = codeRepository.findById(2L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+                    } else if (oAuthClientName.equals("naver")) {
+                        flagCode = codeRepository.findById(18L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+                    }
+
+                    Code genderCode = codeRepository.findById(newGender).orElseThrow(
+                            () -> new DiningApplicationException(ErrorCode.GENDER_INFO_NOT_FOUND));
+
+                    user = User.createKakao(email, name, birthyear + birthday, phone_number, genderCode, flagCode);
+
+                    Role defaultRole = roleRepository.findById(1L).orElseThrow(
+                            () -> new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND)
+                    );
+                    user.getRoles().add(defaultRole);
+                    user = userRepository.save(user);
+                }
             } else {
                 if (gender.equals("male") || gender.equals("M")) {
                     newGender = 3L;
@@ -95,6 +122,7 @@ public class OAuthService extends DefaultOAuth2UserService {
 
         return CustomOAuthUser.builder()
                 .user(user)
+                .flag(user.getFlag().getId())
                 .build();
     }
 

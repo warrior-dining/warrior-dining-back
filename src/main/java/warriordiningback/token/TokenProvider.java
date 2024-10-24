@@ -15,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import warriordiningback.api.user.oauth.CustomOAuthUser;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 import warriordiningback.token.response.TokenResponse;
@@ -42,6 +43,13 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        Long flag = null;
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            flag = ((CustomUserDetails) authentication.getPrincipal()).getFlag();
+        } else if (authentication.getPrincipal() instanceof CustomOAuthUser) {
+            flag = ((CustomOAuthUser) authentication.getPrincipal()).getFlag();
+        }
+
         Map<String, String> header = new HashMap<>();
         header.put("alg", "H256");
         header.put("typ", "JWT");
@@ -51,6 +59,7 @@ public class TokenProvider {
                 .header().add(header).and()
                 .subject(authentication.getName())
                 .issuer("ACCESS")
+                .claim("flag", flag)
                 .claim("auth", authorities)
                 .expiration(getDate(30))
                 .issuedAt(Calendar.getInstance().getTime())
@@ -62,6 +71,7 @@ public class TokenProvider {
                 .header().add(header).and()
                 .subject(authentication.getName())
                 .issuer("REFRESH")
+                .claim("flag", flag)
                 .claim("auth", authorities)
                 .expiration(getDate(1440))
                 .issuedAt(Calendar.getInstance().getTime())
@@ -83,6 +93,10 @@ public class TokenProvider {
 
         if (claims.get("auth") == null) {
             throw new DiningApplicationException(ErrorCode.ROLE_INFO_NOT_FOUND);
+        }
+
+        if (claims.get("flag") == null) {
+            throw new DiningApplicationException(ErrorCode.FLAG_NOT_FOUND);
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -134,7 +148,6 @@ public class TokenProvider {
     }
 
     public TokenResponse refreshToken(String refreshToken) {
-
         // 토큰 내용 가져오기
         Authentication authentication = getAuthentication(refreshToken);
 
@@ -142,6 +155,13 @@ public class TokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+
+        Long flag = null;
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            flag = ((CustomUserDetails) authentication.getPrincipal()).getFlag();
+        } else if (authentication.getPrincipal() instanceof CustomOAuthUser) {
+            flag = ((CustomOAuthUser) authentication.getPrincipal()).getFlag();
+        }
 
         Map<String, String> header = new HashMap<>();
         header.put("alg", "H256");
@@ -152,6 +172,7 @@ public class TokenProvider {
                 .header().add(header).and()
                 .subject(authentication.getName())
                 .issuer("ACCESS")
+                .claim("flag", flag)
                 .claim("auth", authorities)
                 .expiration(getDate(30))
                 .issuedAt(Calendar.getInstance().getTime())
