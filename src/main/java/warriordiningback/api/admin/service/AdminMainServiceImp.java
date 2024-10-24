@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.admin.dto.InquiryCountDto;
-import warriordiningback.domain.inquiry.Inquiry;
 import warriordiningback.domain.inquiry.InquiryRepository;
 import warriordiningback.domain.place.Place;
-import warriordiningback.domain.place.PlaceRepository;
+import warriordiningback.domain.place.PlaceQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
 import warriordiningback.domain.review.ReviewRepository;
 import warriordiningback.domain.user.UserRepository;
@@ -34,7 +33,7 @@ public class AdminMainServiceImp implements AdminMainService {
     private InquiryRepository inquiryRepository;
 
     @Autowired
-    private PlaceRepository placeRepository;
+    private PlaceQueryRepository placeQueryRepository;
 
 
     @Override
@@ -74,7 +73,7 @@ public class AdminMainServiceImp implements AdminMainService {
         // 최근 방문자 수
 
         // 최근 등록된 음식점
-        List<Place> placeRecent = placeRepository.findTop5ByOrderByCreatedAtDESC();
+        List<Place> placeRecent = placeQueryRepository.findTop5ByOrderByCreatedAtDESC();
         results.put("placeRecent", placeRecent);
 
         // resultMap에 조회된 결과 담기
