@@ -8,7 +8,7 @@ import warriordiningback.api.restaurant.dto.PlaceSearchData;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceFile;
 import warriordiningback.domain.place.PlaceMenu;
-import warriordiningback.domain.place.PlaceRepository;
+import warriordiningback.domain.place.PlaceQueryRepository;
 
 import java.util.stream.Collectors;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceSearchService {
 
-    private final PlaceRepository placeRepository;
+    private final PlaceQueryRepository placeRepository;
 
     public Page<PlaceSearchData> searchPlaces(String keyword, Long categoryId, Double minPrice, Double maxPrice, Pageable pageable) {
         Page<Place> places = placeRepository.findAllByNameOrPlaceMenuOrAddressNew(keyword, categoryId, minPrice, maxPrice, pageable);
