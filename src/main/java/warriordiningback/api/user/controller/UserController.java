@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import warriordiningback.api.user.dto.SignInRequest;
-import warriordiningback.api.user.dto.SignUpRequest;
-import warriordiningback.api.user.dto.UserEditRequest;
-import warriordiningback.api.user.dto.UserResponse;
+import warriordiningback.api.user.dto.*;
 import warriordiningback.api.user.service.UserService;
 import warriordiningback.domain.user.User;
 import warriordiningback.token.response.TokenResponse;
@@ -46,6 +43,13 @@ public class UserController {
     public UserResponse editUserInfo(@RequestBody UserEditRequest userEditRequest,
                                      @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.editUserInfo(userDetails.getUsername(), userEditRequest.toEntity());
+        return UserResponse.of(user);
+    }
+
+    @DeleteMapping
+    public UserResponse deleteUserInfo(@Valid @RequestBody UserDeletedRequest userDeletedRequest,
+                                       @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.deleteUserInfo(userDetails.getUsername(), userDeletedRequest.toEntity());
         return UserResponse.of(user);
     }
 }
