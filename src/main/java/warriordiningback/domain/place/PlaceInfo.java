@@ -8,6 +8,8 @@ public interface PlaceInfo {
 
     String getName();
 
+    String getAddressNew();
+
     String getComment();
 
     List<PlaceFileInfo> getPlaceFiles();

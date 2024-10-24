@@ -8,6 +8,8 @@ public interface PlaceDetailInfo {
 
     String getName();
 
+    String getAddressNew();
+
     String getComment();
 
     String getStartTime();
