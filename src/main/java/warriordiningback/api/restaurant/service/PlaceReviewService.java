@@ -17,6 +17,6 @@ public class PlaceReviewService {
 
     public List<ReviewData> findByReview() {
         List<ReviewData> top10ReviewData = reviewRepository.findTop10ReviewData();
-        return top10ReviewData.stream().limit(10).toList();
+        return top10ReviewData.stream().limit(12).toList();
     }
 }
