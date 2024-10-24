@@ -10,5 +10,6 @@ public class ReviewData {
     private Long id;
     private String name;
     private String content;
+    private String placeName;
 
 }
