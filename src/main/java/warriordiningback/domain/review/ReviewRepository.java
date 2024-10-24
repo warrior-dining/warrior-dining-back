@@ -14,8 +14,10 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT new warriordiningback.api.restaurant.dto.ReviewData(r.id, u.name, r.content) " +
-            "FROM Review r JOIN r.user u " +
+    @Query("SELECT new warriordiningback.api.restaurant.dto.ReviewData(r.id, u.name, r.content, p.name) " +
+            "FROM Review r " +
+            "JOIN r.user u " +
+            "JOIN r.place p " +
             "WHERE r.isDeleted = false " +
             "ORDER BY r.id DESC")
     List<ReviewData> findTop10ReviewData();
