@@ -1,23 +1,22 @@
 package warriordiningback.api.restaurant.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceInfo;
 import warriordiningback.domain.place.PlaceQueryRepository;
 import warriordiningback.domain.place.PlaceRepository;
+import warriordiningback.exception.DiningApplicationException;
+import warriordiningback.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
 public class PlaceFilterService {
 
-    @Autowired
-    private PlaceRepository placeRepository;
-
-    @Autowired
-    private PlaceQueryRepository placeQueryRepository;
+    private final PlaceRepository placeRepository;
+    private final PlaceQueryRepository placeQueryRepository;
 
     public Page<PlaceInfo> filterPlaces(Long categoryId, Long minPrice, Long maxPrice, Pageable pageable) {
         // 카테고리와 가격대 모두 필터링할 경우
@@ -36,5 +35,10 @@ public class PlaceFilterService {
         else {
             return placeRepository.findAllByOrderByNameAsc(pageable, PlaceInfo.class);
         }
+    }
+
+    public Place findPlaceById(Long id) {
+        return placeRepository.findById(id).orElseThrow(()
+                -> new DiningApplicationException(ErrorCode.PLACE_NOT_FOUND));
     }
 }
