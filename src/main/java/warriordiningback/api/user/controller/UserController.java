@@ -52,4 +52,14 @@ public class UserController {
         User user = userService.deleteUserInfo(userDetails.getUsername(), userDeletedRequest.toEntity());
         return UserResponse.of(user);
     }
+
+    @PostMapping
+    public FindPasswordResponse findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
+        String newPassword = userService.findPassword(
+                findPasswordRequest.getName(),
+                findPasswordRequest.getBirth(),
+                findPasswordRequest.getPhone()
+        );
+        return FindPasswordResponse.of(newPassword);
+    }
 }

@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndIsUsedTrue(String email);
 
+    Optional<User> findByNameAndBirthAndPhoneAndIsUsedTrueAndFlagId(String name, String birth, String phone, Long flagId);
+
     @Override
     long count();
 }
