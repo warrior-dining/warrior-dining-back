@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.admin.dto.InquiryCountDto;
-import warriordiningback.domain.inquiry.Inquiry;
-import warriordiningback.domain.inquiry.InquiryRepository;
+import warriordiningback.domain.inquiry.InquiryQueryRepository;
 import warriordiningback.domain.place.Place;
-import warriordiningback.domain.place.PlaceRepository;
+import warriordiningback.domain.place.PlaceQueryRepository;
+import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
+import warriordiningback.domain.review.ReviewQueryRepository;
 import warriordiningback.domain.review.ReviewRepository;
+import warriordiningback.domain.user.UserQueryRepository;
 import warriordiningback.domain.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -23,19 +25,20 @@ public class AdminMainServiceImp implements AdminMainService {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ReservationRepository reservationRepository;
-
+    @Autowired
+    private ReservationQueryRepository reservationQueryRepository;
     @Autowired
     private ReviewRepository reviewRepository;
-
     @Autowired
-    private InquiryRepository inquiryRepository;
-
+    private InquiryQueryRepository inquiryQueryRepository;
     @Autowired
-    private PlaceRepository placeRepository;
-
+    private PlaceQueryRepository placeQueryRepository;
+    @Autowired
+    private ReviewQueryRepository reviewQueryRepository;
+    @Autowired
+    private UserQueryRepository userQueryRepository;
 
     @Override
     public Map<String, Object> mainPage() {
@@ -44,19 +47,19 @@ public class AdminMainServiceImp implements AdminMainService {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 
         // 최근 30일 이내 생성된 예약 건수
-        int countRecentReservations = reservationRepository.countRecentReservations(thirtyDaysAgo);
+        int countRecentReservations = reservationQueryRepository.countRecentReservations(thirtyDaysAgo);
         results.put("countRecentReservations", countRecentReservations);
 
         // 최근 30일 이내 생성된 리뷰의 별점 평균
-        double avgRecentRating = reviewRepository.avgRecentRating(thirtyDaysAgo);
+        double avgRecentRating = reviewQueryRepository.avgRecentRating(thirtyDaysAgo);
         results.put("avgRecentRating", avgRecentRating);
 
         // 최근 30일 이내 가입한 사용자 카운트
-        int countRecentJoinUser = userRepository.countRecentJoinUser(thirtyDaysAgo);
+        int countRecentJoinUser = userQueryRepository.countRecentJoinUser(thirtyDaysAgo);
         results.put("countRecentJoinUser", countRecentJoinUser);
 
         // 문의사항 답변처리 상태별 카운트
-        List<InquiryCountDto> countInquiriesByCode = inquiryRepository.countInquiriesByCode();
+        List<InquiryCountDto> countInquiriesByCode = inquiryQueryRepository.countInquiriesByCode();
         results.put("countInquiriesByCode", countInquiriesByCode);
 
         // 총 예약 건수
@@ -71,10 +74,8 @@ public class AdminMainServiceImp implements AdminMainService {
         long userTotalCount = userRepository.count();
         results.put("userTotalCount", userTotalCount);
 
-        // 최근 방문자 수
-
         // 최근 등록된 음식점
-        List<Place> placeRecent = placeRepository.findTop5ByOrderByCreatedAtDESC();
+        List<Place> placeRecent = placeQueryRepository.findTop5ByOrderByCreatedAtDESC();
         results.put("placeRecent", placeRecent);
 
         // resultMap에 조회된 결과 담기

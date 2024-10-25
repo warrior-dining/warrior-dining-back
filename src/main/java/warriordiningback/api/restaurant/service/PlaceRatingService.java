@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import warriordiningback.api.restaurant.dto.MonthReservationData;
 import warriordiningback.api.restaurant.dto.TopReservationData;
-import warriordiningback.domain.reservation.ReservationRepository;
+import warriordiningback.domain.reservation.ReservationQueryRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,10 +19,10 @@ import java.util.List;
 public class PlaceRatingService {
 
     @Autowired
-    private ReservationRepository reservationRepository;
+    private ReservationQueryRepository reservationQueryRepository;
 
     public List<TopReservationData> findTop10Places() {
-        return reservationRepository.findTop10Places();
+        return reservationQueryRepository.findTop10Places();
     }
 
     public List<MonthReservationData> findMonthPlaces(Integer year, Integer month) {
@@ -37,7 +37,7 @@ public class PlaceRatingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid year or month.");
         }
 
-        return reservationRepository.findMonthPlaces(year, month);
+        return reservationQueryRepository.findMonthPlaces(year, month);
     }
 
 }

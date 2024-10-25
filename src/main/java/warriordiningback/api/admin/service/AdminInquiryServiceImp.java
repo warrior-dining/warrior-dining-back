@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.code.CodeService;
 import warriordiningback.api.user.service.UserService;
-import warriordiningback.domain.inquiry.InquiriesAnswer;
-import warriordiningback.domain.inquiry.InquiriesAnswerRepository;
-import warriordiningback.domain.inquiry.Inquiry;
-import warriordiningback.domain.inquiry.InquiryRepository;
+import warriordiningback.domain.inquiry.*;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
@@ -25,6 +22,7 @@ import java.util.Map;
 public class AdminInquiryServiceImp implements AdminInquiryService {
 
     private final InquiryRepository inquiryRepository;
+    private final InquiryQueryRepository inquiryQueryRepository;
     private final InquiriesAnswerRepository answerRepository;
     private final UserService userService;
     private final CodeService codeService;
@@ -42,8 +40,8 @@ public class AdminInquiryServiceImp implements AdminInquiryService {
                     LocalDate date = LocalDate.parse(searchKeyword, DateTimeFormatter.ISO_LOCAL_DATE);
                     yield inquiryRepository.findAllByCreatedAtContainingOrderByCreatedAtDesc(date, pageable);
                 }
-                case "user" -> inquiryRepository.findAllByUserName(searchKeyword, pageable);
-                case "status" -> inquiryRepository.findAllByCodeValue(searchKeyword, pageable);
+                case "user" -> inquiryQueryRepository.findAllByUserName(searchKeyword, pageable);
+                case "status" -> inquiryQueryRepository.findAllByCodeValue(searchKeyword, pageable);
                 default -> inquiryRepository.findAllByOrderByCreatedAtDesc(pageable);
             };
             resultMap.put("status", true);

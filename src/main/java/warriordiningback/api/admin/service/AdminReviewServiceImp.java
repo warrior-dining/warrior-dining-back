@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.domain.review.Review;
+import warriordiningback.domain.review.ReviewQueryRepository;
 import warriordiningback.domain.review.ReviewRepository;
 
 import java.util.HashMap;
@@ -20,18 +21,21 @@ public class AdminReviewServiceImp implements AdminReviewService {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired
+    private ReviewQueryRepository reviewQueryRepository;
+
     @Override
     @Transactional
-    public Map<String, Object> reviewList (String searchType, String searchKeyword, String sortType, Pageable pageable) {
+    public Map<String, Object> reviewList(String searchType, String searchKeyword, String sortType, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Review> searchReviews;
-        if(searchKeyword != null && !searchKeyword.isEmpty()){
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
             switch (searchType) {
                 case "place":
-                   searchReviews = reviewRepository.findAllByPlaceName(searchKeyword, pageable);
-                   break;
+                    searchReviews = reviewQueryRepository.findAllByPlaceName(searchKeyword, pageable);
+                    break;
                 case "user":
-                    searchReviews = reviewRepository.findAllByUserName(searchKeyword, pageable);
+                    searchReviews = reviewQueryRepository.findAllByUserName(searchKeyword, pageable);
                     break;
                 case "content":
                     searchReviews = reviewRepository.findAllByContentContainingOrderByIdDesc(searchKeyword, pageable);
@@ -40,7 +44,7 @@ public class AdminReviewServiceImp implements AdminReviewService {
                     searchReviews = reviewRepository.findAllByOrderByCreatedAtDesc(pageable);
                     break;
             }
-        }  else if(sortType != null && !sortType.isEmpty()) {
+        } else if (sortType != null && !sortType.isEmpty()) {
             switch (sortType) {
                 case "1":
                     searchReviews = reviewRepository.findAllByRatingOrderByCreatedAtDesc(1, pageable);
@@ -72,9 +76,9 @@ public class AdminReviewServiceImp implements AdminReviewService {
                 default:
                     searchReviews = reviewRepository.findAll(pageable);
                     break;
-             }
+            }
         } else {
-                searchReviews = reviewRepository.findAll(pageable);
+            searchReviews = reviewRepository.findAll(pageable);
         }
         resultMap.put("status", true);
         resultMap.put("results", searchReviews);
@@ -82,11 +86,11 @@ public class AdminReviewServiceImp implements AdminReviewService {
     }
 
     @Transactional
-    public Map<String, Object> updateReviewStatus(Long reviewId){
+    public Map<String, Object> updateReviewStatus(Long reviewId) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
-        Review updateReview =  reviewRepository.findById(reviewId).orElseThrow(()-> new RuntimeException("Review Not Found"));
-        if(updateReview != null && !updateReview.isDeleted()){
+        Review updateReview = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review Not Found"));
+        if (updateReview != null && !updateReview.isDeleted()) {
             resultMap.put("status", true);
             updateReview.updateIsdelete(true);
             resultMap.put("results", updateReview);
