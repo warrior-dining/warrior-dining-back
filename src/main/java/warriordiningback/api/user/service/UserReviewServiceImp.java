@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserReviewResponse;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.reservation.Reservation;
+import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
 import warriordiningback.domain.review.Review;
 import warriordiningback.domain.review.ReviewQueryRepository;
@@ -37,6 +38,9 @@ public class UserReviewServiceImp implements UserReviewService {
 	@Autowired
 	private ReservationRepository reservationRepository;
 	
+	@Autowired
+	private ReviewQueryRepository reviewQueryRepository;
+
 	@Override
 	public Map<String, Object> ReservationInfo(Long reservationId) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -70,12 +74,26 @@ public class UserReviewServiceImp implements UserReviewService {
 		Map<String, Object> resultMap = new HashMap<>();
 		Page<Review> reviews;
 		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-		reviews = reviewRepository.findByUserAndIsDeleted(user.getId(), pageable);
+		reviews = reviewQueryRepository.findByUserAndIsDeleted(user.getId(), pageable);
 		
 		resultMap.put("status", true);
 		resultMap.put("results", reviews);
 		return resultMap;
 	}
+	
+	@Override
+    @Transactional
+    public Map<String, Object> myReviewDelete(Long reviewId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("status", false);
+        Review deleteReview = reviewRepository.findById(reviewId).orElseThrow(() -> new DiningApplicationException(ErrorCode.REVIEW_NOT_FOUND));
+        if (deleteReview != null && !deleteReview.isDeleted()) {
+            resultMap.put("status", true);
+            deleteReview.updateIsdelete(true);
+            resultMap.put("results", deleteReview);
+        }
+        return resultMap;
+    }
 
 	@Override
 	public Map<String, Object> myReviewInfo(Long reviewId) {
@@ -93,6 +111,19 @@ public class UserReviewServiceImp implements UserReviewService {
 		return resultMap;
 	}
 
+	@Override
+    @Transactional
+    public Map<String, Object> myReviewInfoEdit(Long id, Map<String, Object> content) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Review updateReview = reviewRepository.findById(id).orElseThrow(() -> new DiningApplicationException(ErrorCode.REVIEW_NOT_FOUND));
+        updateReview.update(Integer.parseInt(content.get("rating").toString()), content.get("review").toString());
+
+        resultMap.put("status", true);
+        resultMap.put("results", updateReview);
+        return resultMap;
+    }
+	
     @Override
     public Map<String, Object> myReviewUpdateStatus(Long reviewId) {
         Map<String, Object> resultMap = new HashMap<>();
