@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +25,8 @@ public class UserInquiryController {
 	private UserInquiryService inquiryService;
 	
 	@GetMapping("/")
-	public Map<String, Object> inquiryList(@RequestParam("email") String email, Pageable pageable){
-		return inquiryService.inquiryList(email, pageable);
+	public Map<String, Object> inquiryList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable){
+		return inquiryService.inquiryList(userDetails, pageable);
 	}
 
 	@GetMapping("/{id:[0-9]+}")
