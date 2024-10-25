@@ -11,6 +11,7 @@ import warriordiningback.api.user.dto.UserReservationListResponse;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.reservation.Reservation;
+import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
@@ -28,7 +29,7 @@ public class OwnerReservationServiceImp implements OwnerReservationService {
 
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
-    private final CodeRepository codeRepository;
+    private final ReservationQueryRepository reservationQueryRepository;
 
     @Override
     public Map<String, Object> ownerMain(String status, UserDetails userDetails, Pageable pageable) {
@@ -40,10 +41,10 @@ public class OwnerReservationServiceImp implements OwnerReservationService {
         if (status != null && !status.isEmpty()) {
             Long statusCode = Long.parseLong(status);
             User owner = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-            ownerReservations = reservationRepository.findAllByOwner(owner.getId(), statusCode, pageable);
+            ownerReservations = reservationQueryRepository.findAllByOwner(owner.getId(), statusCode, pageable);
         } else {
             User owner = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-            ownerReservations = reservationRepository.findAllByOwnerNotStatus(owner.getId(), pageable);
+            ownerReservations = reservationQueryRepository.findAllByOwnerNotStatus(owner.getId(), pageable);
         }
         for (Reservation row : ownerReservations.getContent()) {
             OwnerReservationListResponse response = new OwnerReservationListResponse(row);

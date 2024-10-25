@@ -40,5 +40,13 @@ public interface ReservationQueryRepository extends JpaRepository<Reservation, L
     @Query("SELECT r FROM Reservation r JOIN r.place p WHERE " +
             "p.name LIKE %:placeName%")
     Page<Reservation> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
+
+    @Query("SELECT r FROM Reservation r JOIN r.place p JOIN p.user u JOIN r.code c WHERE " +
+            "u.id = :userId AND c.id = :status ORDER BY r.reservationDate DESC")
+    Page<Reservation> findAllByOwner(@Param("userId") Long userId, @Param("status") Long status, Pageable pageable);
+
+    @Query("SELECT r FROM Reservation r JOIN r.place p JOIN p.user u WHERE " +
+            "u.id = :userId ORDER BY r.reservationDate DESC")
+    Page<Reservation> findAllByOwnerNotStatus(@Param("userId") Long userId, Pageable pageable);
 }
 
