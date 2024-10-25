@@ -16,4 +16,6 @@ public class FindPasswordRequest {
 
     @NotBlank
     private String phone;
+
+    private Long flag;
 }

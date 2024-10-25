@@ -23,6 +23,7 @@ import warriordiningback.token.response.TokenResponse;
 import warriordiningback.token.service.CustomUserDetailsService;
 
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -117,15 +118,17 @@ public class UserService {
 
     @Transactional
     public String findPassword(String name, String birth, String phone) {
-        User user = userRepository.findByNameAndBirthAndPhoneAndIsUsedTrue(name, birth, phone);
-        if (user == null) {
+        Optional<User> user = userRepository.findByNameAndBirthAndPhoneAndIsUsedTrueAndFlagId(
+                name, birth, phone, 1L
+        );
+        if (user.isEmpty()) {
             throw new DiningApplicationException(ErrorCode.USER_NOT_FOUND);
-        } else if (user.getFlag().getId() != 1L) {
+        } else if (user.get().getFlag().getId() != 1L) {
             throw new DiningApplicationException(ErrorCode.SOCIAL_LOGIN_NOT_ALLOWED);
         }
 
         String newPassword = generateRandomPassword();
-        user.edit(user.getPhone(), encodedPassword(newPassword));
+        user.get().edit(user.get().getPhone(), encodedPassword(newPassword));
 
         return newPassword;
     }

@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndIsUsedTrue(String email);
 
-    User findByNameAndBirthAndPhoneAndIsUsedTrue(String name, String birth, String phone);
+    Optional<User> findByNameAndBirthAndPhoneAndIsUsedTrueAndFlagId(String name, String birth, String phone, Long flagId);
 
     @Override
     long count();
