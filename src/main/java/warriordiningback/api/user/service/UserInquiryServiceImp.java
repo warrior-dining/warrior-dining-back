@@ -3,6 +3,7 @@ package warriordiningback.api.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserInquiryResponse;
@@ -32,10 +33,10 @@ public class UserInquiryServiceImp implements UserInquiryService {
     private InquiryQueryRepository inquiryQueryRepository;
 
     @Override
-    public Map<String, Object> inquiryList(String email, Pageable pageable) {
+    public Map<String, Object> inquiryList(UserDetails userDetails, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Inquiry> inquiry;
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         inquiry = inquiryQueryRepository.findByUser(user.getId(), pageable);
 
         resultMap.put("status", true);
