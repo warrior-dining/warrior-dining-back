@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.BookMarkResponse;
@@ -35,11 +36,11 @@ public class UserBookMarkServiceImp implements UserBookMarkService {
 
 
     @Override
-    public Map<String, Object> myBookMarkList(String email, Pageable pageable) {
+    public Map<String, Object> myBookMarkList(UserDetails userDetails, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
-        if (UserRepository.existsByEmail(email)) {
-            Page<Object[]> res = userQueryRepository.findUserBookmarksWithAvgRating(email, pageable);
+        if (UserRepository.existsByEmail(userDetails.getUsername())) {
+            Page<Object[]> res = userQueryRepository.findUserBookmarksWithAvgRating(userDetails.getUsername(), pageable);
             List<BookMarkResponse> bookMarkResponses = new ArrayList<>();
             for (Object[] row : res) {
                 BookMarkResponse bookMark = new BookMarkResponse();
@@ -72,9 +73,9 @@ public class UserBookMarkServiceImp implements UserBookMarkService {
 
     @Override
     @Transactional
-    public Map<String, Object> myBookMarkDelete(String email, Long placeId) {
+    public Map<String, Object> myBookMarkDelete(UserDetails userDetails, Long placeId) {
         Map<String, Object> resultMap = new HashMap<>();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         Place place = placeRepository.findById(placeId).orElseThrow(() -> new DiningApplicationException(ErrorCode.PLACE_NOT_FOUND));
         user.getBookmarks().remove(place);
 
