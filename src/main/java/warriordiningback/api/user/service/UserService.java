@@ -39,20 +39,25 @@ public class UserService {
     // 로그인
     public TokenResponse signIn(SignInRequest signInRequest) {
         User user = findUserByEmail(signInRequest.getEmail());
-        matchesPassword(signInRequest.getPassword(), user.getPassword());
-        // 1. email + password를 기반으로 Authentication 객체 생성
-        // 이때 authentication은 인증 여부를 확인하는 authenticated 값이 false
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(signInRequest.getEmail());
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, signInRequest.getPassword());
+        boolean userByIsUsed = user.isUsed();
+        if (userByIsUsed) {
+            matchesPassword(signInRequest.getPassword(), user.getPassword());
+            // 1. email + password를 기반으로 Authentication 객체 생성
+            // 이때 authentication은 인증 여부를 확인하는 authenticated 값이 false
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(signInRequest.getEmail());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, signInRequest.getPassword());
 
-        // 2. 실제 검증: authenticate() 메서드를 통해 요청된 User에 대한 검증 진행
-        // authenticate 메서드가 실행될 때 CustomUserDetailsService에서 만든 loadUserByUsername 메서드 실행
-        Authentication authentication = authenticationManagerBuilder
-                .getObject().authenticate(authenticationToken);
+            // 2. 실제 검증: authenticate() 메서드를 통해 요청된 User에 대한 검증 진행
+            // authenticate 메서드가 실행될 때 CustomUserDetailsService에서 만든 loadUserByUsername 메서드 실행
+            Authentication authentication = authenticationManagerBuilder
+                    .getObject().authenticate(authenticationToken);
 
-        // 3. 인증 정보를 기반으로 Jwt 토큰 생성
-        return tokenProvider.generateToken(authentication);
+            // 3. 인증 정보를 기반으로 Jwt 토큰 생성
+            return tokenProvider.generateToken(authentication);
+        } else {
+            throw new DiningApplicationException(ErrorCode.USER_NOT_FOUND);
+        }
     }
 
     // 회원가입
@@ -84,12 +89,28 @@ public class UserService {
     // 정보 수정
     @Transactional
     public User editUserInfo(String email, User user) {
-        User existingMember = findUserByEmail(email);
-        matchesPassword(user.getPassword(), existingMember.getPassword());
+        User existingUser = findUserByEmail(email);
+        matchesPassword(user.getPassword(), existingUser.getPassword());
         String encodedPassword = (user.getNewPassword() != null && !user.getNewPassword().isEmpty())
-                ? encodedPassword(user.getNewPassword()) : existingMember.getPassword();
-        existingMember.edit(user.getPhone(), encodedPassword);
-        return existingMember;
+                ? encodedPassword(user.getNewPassword()) : existingUser.getPassword();
+        existingUser.edit(user.getPhone(), encodedPassword);
+        return existingUser;
+    }
+
+    // 회원 탈퇴
+    @Transactional
+    public User deleteUserInfo(String email, User user) {
+        User existingUser = findUserByEmail(email);
+        Long flag = existingUser.getFlag().getId();
+        if (flag == 1) {
+            matchesPassword(user.getPassword(), existingUser.getPassword());
+            existingUser.isEnabled(user.isUsed());
+            return existingUser;
+        } else if (flag == 2 || flag == 18) {
+            existingUser.isEnabled(user.isUsed());
+            return existingUser;
+        }
+        throw new DiningApplicationException(ErrorCode.FLAG_NOT_FOUND);
     }
 
     /* ===== 재사용 처리 메서드 ===== */
@@ -97,15 +118,16 @@ public class UserService {
     // 다른 Service에서 사용 시 public으로 변경하여 사용하셔도 됩니다.
 
     // 중복회원 검증
-    private void validateUser(String email) {
+    private boolean validateUser(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DiningApplicationException(ErrorCode.DUPLICATED_USER_ID);
         }
+        return false;
     }
 
     // 유저 이메일 조회
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndIsUsedTrue(email)
                 .orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
     }
 

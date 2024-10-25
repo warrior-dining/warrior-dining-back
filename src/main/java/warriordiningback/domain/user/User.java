@@ -70,7 +70,12 @@ public class User extends BaseEntity implements UserDetails {
         this.newPassword = newPassword;
     }
 
-    /* 비즈니스 로직 */
+    public User(String email, String password, boolean isUsed) {
+        this.email = email;
+        this.password = password;
+        this.isUsed = isUsed;
+    }
+
     public static User create(String email, String password, String name, String birth, String phone, Code gender, Code flag) {
         User user = new User();
         user.email = email;
@@ -100,7 +105,10 @@ public class User extends BaseEntity implements UserDetails {
         this.phone = phone;
         this.password = encodedPassword;
     }
-    /* ========== */
+
+    public void isEnabled(boolean status) {
+        this.isUsed = status;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -126,11 +134,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
         return true;
     }
 

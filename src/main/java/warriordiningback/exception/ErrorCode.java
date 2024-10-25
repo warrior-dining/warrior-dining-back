@@ -21,6 +21,7 @@ public enum ErrorCode {
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 음식점에 대한 정보가 존재하지 않습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리뷰에 대한 정보가 존재하지 않습니다."),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 예약에 대한 정보가 존재하지 않습니다."),
+    FLAG_NOT_FOUND(HttpStatus.NOT_FOUND, "가입경로를 찾을 수 없습니다. 고객센터에 문의해주세요."),
 
     //403,
     OWNER_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "해당 사용자에게 OWNER 권한이 없습니다.");
