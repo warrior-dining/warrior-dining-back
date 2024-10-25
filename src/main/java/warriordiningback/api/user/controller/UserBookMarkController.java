@@ -30,7 +30,8 @@ public class UserBookMarkController {
     }
 
     @DeleteMapping("/")
-    public Map<String, Object> myBookMarkDelete(@AuthenticationPrincipal UserDetails userDetails, @RequestParam("placeId") long placeId) {
+    public Map<String, Object> myBookMarkDelete(@AuthenticationPrincipal UserDetails userDetails,
+                                                @RequestParam("placeId") long placeId) {
         return userBookMarkService.myBookMarkDelete(userDetails, placeId);
     }
 }
