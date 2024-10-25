@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.admin.dto.InquiryCountDto;
 import warriordiningback.domain.inquiry.InquiryQueryRepository;
-import warriordiningback.domain.inquiry.InquiryRepository;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceQueryRepository;
 import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
 import warriordiningback.domain.review.ReviewQueryRepository;
 import warriordiningback.domain.review.ReviewRepository;
+import warriordiningback.domain.user.UserQueryRepository;
 import warriordiningback.domain.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -32,13 +32,13 @@ public class AdminMainServiceImp implements AdminMainService {
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
-    private InquiryRepository inquiryRepository;
-    @Autowired
     private InquiryQueryRepository inquiryQueryRepository;
     @Autowired
     private PlaceQueryRepository placeQueryRepository;
     @Autowired
     private ReviewQueryRepository reviewQueryRepository;
+    @Autowired
+    private UserQueryRepository userQueryRepository;
 
     @Override
     public Map<String, Object> mainPage() {
@@ -55,7 +55,7 @@ public class AdminMainServiceImp implements AdminMainService {
         results.put("avgRecentRating", avgRecentRating);
 
         // 최근 30일 이내 가입한 사용자 카운트
-        int countRecentJoinUser = userRepository.countRecentJoinUser(thirtyDaysAgo);
+        int countRecentJoinUser = userQueryRepository.countRecentJoinUser(thirtyDaysAgo);
         results.put("countRecentJoinUser", countRecentJoinUser);
 
         // 문의사항 답변처리 상태별 카운트

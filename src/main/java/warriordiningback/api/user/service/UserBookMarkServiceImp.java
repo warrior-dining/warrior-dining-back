@@ -10,6 +10,7 @@ import warriordiningback.api.user.dto.BookMarkResponse;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceRepository;
 import warriordiningback.domain.user.User;
+import warriordiningback.domain.user.UserQueryRepository;
 import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
@@ -25,11 +26,12 @@ public class UserBookMarkServiceImp implements UserBookMarkService {
 
     @Autowired
     private UserRepository UserRepository;
-
     @Autowired
     private PlaceRepository placeRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserQueryRepository userQueryRepository;
 
 
     @Override
@@ -37,7 +39,7 @@ public class UserBookMarkServiceImp implements UserBookMarkService {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
         if (UserRepository.existsByEmail(email)) {
-            Page<Object[]> res = userRepository.findUserBookmarksWithAvgRating(email, pageable);
+            Page<Object[]> res = userQueryRepository.findUserBookmarksWithAvgRating(email, pageable);
             List<BookMarkResponse> bookMarkResponses = new ArrayList<>();
             for (Object[] row : res) {
                 BookMarkResponse bookMark = new BookMarkResponse();
