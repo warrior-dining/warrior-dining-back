@@ -7,6 +7,7 @@ import warriordiningback.api.admin.dto.InquiryCountDto;
 import warriordiningback.domain.inquiry.InquiryRepository;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceQueryRepository;
+import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
 import warriordiningback.domain.review.ReviewRepository;
 import warriordiningback.domain.user.UserRepository;
@@ -27,6 +28,9 @@ public class AdminMainServiceImp implements AdminMainService {
     private ReservationRepository reservationRepository;
 
     @Autowired
+    private ReservationQueryRepository reservationQueryRepository;
+
+    @Autowired
     private ReviewRepository reviewRepository;
 
     @Autowired
@@ -35,7 +39,6 @@ public class AdminMainServiceImp implements AdminMainService {
     @Autowired
     private PlaceQueryRepository placeQueryRepository;
 
-
     @Override
     public Map<String, Object> mainPage() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -43,7 +46,7 @@ public class AdminMainServiceImp implements AdminMainService {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 
         // 최근 30일 이내 생성된 예약 건수
-        int countRecentReservations = reservationRepository.countRecentReservations(thirtyDaysAgo);
+        int countRecentReservations = reservationQueryRepository.countRecentReservations(thirtyDaysAgo);
         results.put("countRecentReservations", countRecentReservations);
 
         // 최근 30일 이내 생성된 리뷰의 별점 평균
