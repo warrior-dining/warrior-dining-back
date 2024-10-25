@@ -13,7 +13,6 @@ import warriordiningback.api.owner.service.OwnerReservationService;
 
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/owner")
 @RequiredArgsConstructor
@@ -24,7 +23,6 @@ public class OwnerReservationController {
     @GetMapping
     public Map<String, Object> ownerMain(@RequestParam(name = "status", required = false) String status,
                                          @AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
-        log.info("호출됨 !");
         return ownerReservationService.ownerMain(status, userDetails, pageable);
     }
 }
