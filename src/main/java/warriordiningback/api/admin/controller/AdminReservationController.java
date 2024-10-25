@@ -1,11 +1,8 @@
 package warriordiningback.api.admin.controller;
 
-import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import warriordiningback.api.admin.service.AdminReservationService;
-import warriordiningback.domain.Code;
-import warriordiningback.domain.reservation.Reservation;
-import warriordiningback.domain.CodeRepository;
-import warriordiningback.domain.reservation.ReservationRepository;
 
 @RestController
 @RequestMapping("/api/admin/reservations")

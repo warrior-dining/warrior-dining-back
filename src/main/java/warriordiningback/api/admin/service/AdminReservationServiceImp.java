@@ -1,21 +1,23 @@
 package warriordiningback.api.admin.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.extern.slf4j.Slf4j;
+import warriordiningback.api.admin.dto.ReservationResponse;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.reservation.Reservation;
 import warriordiningback.domain.reservation.ReservationRepository;
+import warriordiningback.exception.DiningApplicationException;
+import warriordiningback.exception.ErrorCode;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class AdminReservationServiceImp implements AdminReservationService{
@@ -29,39 +31,44 @@ public class AdminReservationServiceImp implements AdminReservationService{
 	@Override
 	public Map<String, Object> reservationList(String searchType, String searchKeyword, String status, Pageable pageable) {
 		Map<String, Object> resultMap = new HashMap<>();
-		Page<Reservation> searchReservation;
 		resultMap.put("status", false);
+		Page<Reservation> searchReservation;
+		
 		if(status != null && !status.isEmpty()) {
-			Code code = codeRepository.findById(Long.parseLong(status)).orElseThrow(()-> new RuntimeException("해당코드가 존재하지 않음"));
+			Code code = codeRepository.findById(Long.parseLong(status)).orElseThrow(()-> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
 			searchReservation = reservationRepository.findAllByCodeOrderByCreatedAtDesc(pageable, code);
 			resultMap.put("status", true);
 		} else if(searchKeyword != null && !searchKeyword.isEmpty()){
 			switch (searchType) {
 			case "id":
-				log.info("2");
 				searchReservation = reservationRepository.findById(Long.parseLong(searchKeyword), pageable);
 				break;
 			case "name":
 				searchReservation = reservationRepository.findAllByUserName(searchKeyword, pageable);
-				log.info("3");
 				break;
 			case "place":
 				searchReservation = reservationRepository.findAllByPlaceName(searchKeyword, pageable);
-				log.info("4");
 				break;
 			default:
 				searchReservation = reservationRepository.findAllByOrderByCreatedAtDesc(pageable);
-				log.info("5");
 				break;
 			}
 			resultMap.put("status", true);
-		}else {
+		} else {
 			searchReservation = reservationRepository.findAllByOrderByCreatedAtDesc(pageable);
-			log.info("6");
 			resultMap.put("status", true);
 		}
+		
+		List<ReservationResponse> reservationResponses = new ArrayList<>();
+			for (Reservation row : searchReservation.getContent()) {
+				ReservationResponse adminReservationResponse = new ReservationResponse(row);
+				reservationResponses.add(adminReservationResponse);
+		}
+		
+		Page<ReservationResponse> results = new PageImpl<>(reservationResponses, searchReservation.getPageable(), searchReservation.getTotalElements());
+		
 		resultMap.put("status", true);
-		resultMap.put("results", searchReservation);
+		resultMap.put("results", results);
 		return resultMap;
 	}
 
@@ -80,14 +87,12 @@ public class AdminReservationServiceImp implements AdminReservationService{
 		}
 		
 		if(reservationRepository.existsById(id)) {
-			Reservation reservations = reservationRepository.findById(id).orElseThrow(()-> new RuntimeException("해당아이디 없음"));
+			Reservation reservations = reservationRepository.findById(id).orElseThrow(()-> new DiningApplicationException(ErrorCode.RESERVATION_NOT_FOUND));
 			reservations.updateStatus(code);
 			responseMap.put("status", true);
 			responseMap.put("results", reservations);
 		}
 		return responseMap;
 	}
-
-	
 	
 }
