@@ -7,7 +7,7 @@ import warriordiningback.domain.Code;
 import warriordiningback.domain.user.User;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    
+
     Page<Reservation> findById(Long id, Pageable pageable);
 
     Page<Reservation> findAllByCodeOrderByCreatedAtDesc(Pageable pageable, Code code);

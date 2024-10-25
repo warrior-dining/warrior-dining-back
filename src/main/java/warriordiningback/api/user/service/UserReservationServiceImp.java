@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserReservationAddRequest;
@@ -48,10 +49,10 @@ public class UserReservationServiceImp implements UserReservationService{
     private CodeRepository codeRepository;
 
     @Override
-    public Map<String, Object> myReservationList(String email, Pageable pageable) {
+    public Map<String, Object> myReservationList(UserDetails userDetails, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         Page<Reservation> myReservations = reservationRepository.findAllByUserOrderByReservationDateDesc(user, pageable);
         List<UserReservationListResponse> userReservationListResponse = new ArrayList<>();
 

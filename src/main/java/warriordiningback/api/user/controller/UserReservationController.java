@@ -3,6 +3,8 @@ package warriordiningback.api.user.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.user.dto.UserReservationAddRequest;
 import warriordiningback.api.user.dto.UserReservationEditRequest;
@@ -19,8 +21,8 @@ public class UserReservationController {
     private UserReservationService userReservationService;
 
     @GetMapping("/")
-    public Map<String, Object> myReservationList(@RequestParam("email") String email, Pageable pageable){
-        return userReservationService.myReservationList(email, pageable);
+    public Map<String, Object> myReservationList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable){
+        return userReservationService.myReservationList(userDetails, pageable);
     }
 
     @PostMapping("/")
