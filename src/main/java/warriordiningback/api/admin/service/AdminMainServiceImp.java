@@ -10,6 +10,7 @@ import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceQueryRepository;
 import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
+import warriordiningback.domain.review.ReviewQueryRepository;
 import warriordiningback.domain.review.ReviewRepository;
 import warriordiningback.domain.user.UserRepository;
 
@@ -36,6 +37,8 @@ public class AdminMainServiceImp implements AdminMainService {
     private InquiryQueryRepository inquiryQueryRepository;
     @Autowired
     private PlaceQueryRepository placeQueryRepository;
+    @Autowired
+    private ReviewQueryRepository reviewQueryRepository;
 
     @Override
     public Map<String, Object> mainPage() {
@@ -48,7 +51,7 @@ public class AdminMainServiceImp implements AdminMainService {
         results.put("countRecentReservations", countRecentReservations);
 
         // 최근 30일 이내 생성된 리뷰의 별점 평균
-        double avgRecentRating = reviewRepository.avgRecentRating(thirtyDaysAgo);
+        double avgRecentRating = reviewQueryRepository.avgRecentRating(thirtyDaysAgo);
         results.put("avgRecentRating", avgRecentRating);
 
         // 최근 30일 이내 가입한 사용자 카운트

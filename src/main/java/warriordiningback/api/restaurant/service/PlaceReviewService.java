@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import warriordiningback.api.restaurant.dto.ReviewData;
-import warriordiningback.domain.review.ReviewRepository;
+import warriordiningback.domain.review.ReviewQueryRepository;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import java.util.List;
 public class PlaceReviewService {
 
     @Autowired
-    private ReviewRepository reviewRepository;
+    private ReviewQueryRepository reviewQueryRepository;
 
     public List<ReviewData> findByReview() {
-        List<ReviewData> top10ReviewData = reviewRepository.findTop10ReviewData();
+        List<ReviewData> top10ReviewData = reviewQueryRepository.findTop10ReviewData();
         return top10ReviewData.stream().limit(12).toList();
     }
 }
