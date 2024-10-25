@@ -75,24 +75,24 @@ public class AdminReservationServiceImp implements AdminReservationService{
 	@Override
 	@Transactional
 	public Map<String, Object> updateReservation(Long id, Map<String, Long> statusMap) {
-		Map<String, Object> responseMap = new HashMap<>();
-		responseMap.put("status", false);
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("status", false);
 		
 		Code code = null;
 		if(statusMap.get("status") != null && statusMap.get("status") == 14) {
 			code = codeRepository.findById(13L).orElseThrow(()-> new RuntimeException());
 		} else {
-			responseMap.put("message", "잘못 요청한듯");
-			return responseMap;
+			resultMap.put("message", "잘못 요청한듯");
+			return resultMap;
 		}
 		
 		if(reservationRepository.existsById(id)) {
 			Reservation reservations = reservationRepository.findById(id).orElseThrow(()-> new DiningApplicationException(ErrorCode.RESERVATION_NOT_FOUND));
 			reservations.updateStatus(code);
-			responseMap.put("status", true);
-			responseMap.put("results", reservations);
+			resultMap.put("status", true);
+			resultMap.put("results", reservations);
 		}
-		return responseMap;
+		return resultMap;
 	}
 	
 }
