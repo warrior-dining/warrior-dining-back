@@ -22,6 +22,8 @@ import warriordiningback.token.TokenProvider;
 import warriordiningback.token.response.TokenResponse;
 import warriordiningback.token.service.CustomUserDetailsService;
 
+import java.security.SecureRandom;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -113,6 +115,21 @@ public class UserService {
         throw new DiningApplicationException(ErrorCode.FLAG_NOT_FOUND);
     }
 
+    @Transactional
+    public String findPassword(String name, String birth, String phone) {
+        User user = userRepository.findByNameAndBirthAndPhoneAndIsUsedTrue(name, birth, phone);
+        if (user == null) {
+            throw new DiningApplicationException(ErrorCode.USER_NOT_FOUND);
+        } else if (user.getFlag().getId() != 1L) {
+            throw new DiningApplicationException(ErrorCode.SOCIAL_LOGIN_NOT_ALLOWED);
+        }
+
+        String newPassword = generateRandomPassword();
+        user.edit(user.getPhone(), encodedPassword(newPassword));
+
+        return newPassword;
+    }
+
     /* ===== 재사용 처리 메서드 ===== */
     // 중복으로 사용되어 해당 서비스내에서 재사용하도록 private으로 생성하였습니다.
     // 다른 Service에서 사용 시 public으로 변경하여 사용하셔도 됩니다.
@@ -141,6 +158,18 @@ public class UserService {
         if (!passwordEncoder.matches(password, encodedPassword)) {
             throw new DiningApplicationException(ErrorCode.INVALID_PASSWORD);
         }
+    }
+
+    // 랜덤 비밀번호 생성
+    private String generateRandomPassword() {
+        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@$!%*?&#";
+        StringBuilder password = new StringBuilder(12);
+        SecureRandom random = new SecureRandom();
+
+        for (int i = 0; i < 12; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return password.toString();
     }
 
     /* ========== */
