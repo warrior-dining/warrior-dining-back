@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.admin.dto.InquiryCountDto;
+import warriordiningback.domain.inquiry.InquiryQueryRepository;
 import warriordiningback.domain.inquiry.InquiryRepository;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceQueryRepository;
@@ -23,19 +24,16 @@ public class AdminMainServiceImp implements AdminMainService {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ReservationRepository reservationRepository;
-
     @Autowired
     private ReservationQueryRepository reservationQueryRepository;
-
     @Autowired
     private ReviewRepository reviewRepository;
-
     @Autowired
     private InquiryRepository inquiryRepository;
-
+    @Autowired
+    private InquiryQueryRepository inquiryQueryRepository;
     @Autowired
     private PlaceQueryRepository placeQueryRepository;
 
@@ -58,7 +56,7 @@ public class AdminMainServiceImp implements AdminMainService {
         results.put("countRecentJoinUser", countRecentJoinUser);
 
         // 문의사항 답변처리 상태별 카운트
-        List<InquiryCountDto> countInquiriesByCode = inquiryRepository.countInquiriesByCode();
+        List<InquiryCountDto> countInquiriesByCode = inquiryQueryRepository.countInquiriesByCode();
         results.put("countInquiriesByCode", countInquiriesByCode);
 
         // 총 예약 건수
@@ -72,8 +70,6 @@ public class AdminMainServiceImp implements AdminMainService {
         // 총 회원 수
         long userTotalCount = userRepository.count();
         results.put("userTotalCount", userTotalCount);
-
-        // 최근 방문자 수
 
         // 최근 등록된 음식점
         List<Place> placeRecent = placeQueryRepository.findTop5ByOrderByCreatedAtDESC();
