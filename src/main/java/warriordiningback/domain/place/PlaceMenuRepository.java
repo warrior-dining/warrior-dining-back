@@ -7,6 +7,5 @@ import java.util.List;
 public interface PlaceMenuRepository extends JpaRepository<PlaceMenu, Long> {
 
     List<PlaceMenu> findByPlaceId(Long placeId);
-    Long countByPlaceId(Long placeId);
 
 }
