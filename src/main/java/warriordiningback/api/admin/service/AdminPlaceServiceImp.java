@@ -3,53 +3,41 @@ package warriordiningback.api.admin.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import warriordiningback.api.code.CodeService;
+import warriordiningback.api.restaurant.service.PlaceFilterService;
+import warriordiningback.api.user.service.UserService;
 import warriordiningback.domain.Code;
-import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.place.*;
 import warriordiningback.domain.user.User;
-import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
 import warriordiningback.exception.ErrorCode;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AdminPlaceServiceImp implements AdminPlaceService {
 
+    private final PlaceRepository placeRepository;
+    private final PlaceMenuRepository placeMenuRepository;
+    private final PlaceFileRepository placeFileRepository;
 
-
-    @Autowired
-    private PlaceRepository placeRepository;
-
-    @Autowired
-    private PlaceMenuRepository placeMenuRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CodeRepository codeRepository;
-
-    @Autowired
-    private AdminFileService adminFileService;
-    @Autowired
-    private PlaceFileRepository placeFileRepository;
+    private final AdminFileService adminFileService;
+    private final PlaceFilterService placeFilterService;
+    private final UserService userService;
+    private final CodeService codeService;
 
     @Override
     public Map<String, Object> placeList(String searchType, String searchKeyword, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Place> resPlaces;
         if (searchKeyword != null && !searchKeyword.isEmpty()) {
-
             switch (searchType) {
                 case "name":
                     resPlaces = placeRepository.findByNameContainingOrderByNameAsc(searchKeyword, pageable);
@@ -64,8 +52,6 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         } else {
             resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
         }
-
-
         resultMap.put("status", true);
         resultMap.put("results", resPlaces);
         resultMap.put("message", "success");
@@ -76,7 +62,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
     public Map<String, Object> placeInfo(Long placeId) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", true);
-        resultMap.put("results", placeRepository.findById(placeId).orElseThrow(()->new RuntimeException("그런 아이디 없다.")));
+        resultMap.put("results", placeFilterService.findPlaceById(placeId));
         resultMap.put("message", "success");
         return resultMap;
     }
@@ -91,16 +77,17 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         List<Map<String, Object>> menuItems;
         Map<String, Object> placeInfo;
         try {
-            menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<List<Map<String, Object>>>() {});
-            placeInfo = objectMapper.readValue(placeInfoJson, new TypeReference<Map<String, Object>>() {});
+            menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<>() {
+            });
+            placeInfo = objectMapper.readValue(placeInfoJson, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
-            log.error("JSON 변환 실패", e);
             return Collections.singletonMap("status", false);
         }
         hasRole(placeInfo.get("email").toString());
         /* Place 테이블에 인서트 하는 로직 */
-        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-        Code category = codeRepository.findById(Long.valueOf(placeInfo.get("category").toString())).orElseThrow(()-> new RuntimeException("그런 코드 없음"));
+        User userInfo = userService.findUserByEmail(placeInfo.get("email").toString());
+        Code category = codeService.findCodeById(Long.valueOf(placeInfo.get("category").toString()));
         Place place = Place.create(placeInfo.get("name").toString(),
                 userInfo,
                 category,
@@ -112,7 +99,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
                 placeInfo.get("description").toString());
         placeRepository.save(place);
         /* Menu 테이블에 인서트 하는 로직 */
-        for(int i = 0; i < menuItems.size(); i++){
+        for (int i = 0; i < menuItems.size(); i++) {
             Map<String, Object> menuItem = menuItems.get(i);
             PlaceMenu menu = PlaceMenu.create(place, menuItem.get("name").toString(), Integer.parseInt(menuItem.get("price").toString()));
             placeMenuRepository.save(menu);
@@ -121,7 +108,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         /* 이미지 파일 테이블에 인서트 하는 로직 */
         adminFileService.fileUpload(files, place);
 
-        Place resPlace = placeRepository.findById(place.getId()).orElseThrow(()-> new RuntimeException("그런 아이디 없다."));
+        Place resPlace = placeFilterService.findPlaceById(place.getId());
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", true);
         resultMap.put("results", resPlace);
@@ -136,18 +123,20 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         List<Map<String, Object>> menuItems;
         Map<String, Object> placeInfo;
         try {
-            existingImages = objectMapper.readValue(existingImagesJson, new TypeReference<List<Map<String, Object>>>() {});
-            menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<List<Map<String, Object>>>() {});
-            placeInfo = objectMapper.readValue(placeInfoJson, new TypeReference<Map<String, Object>>() {});
+            existingImages = objectMapper.readValue(existingImagesJson, new TypeReference<>() {
+            });
+            menuItems = objectMapper.readValue(menuItemsJson, new TypeReference<>() {
+            });
+            placeInfo = objectMapper.readValue(placeInfoJson, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
-            log.error("JSON 변환 실패", e);
             return Collections.singletonMap("status", false);
         }
         hasRole(placeInfo.get("email").toString());
         /* 음식점 테이블 데이터 수정 작업 */
-        Place editPlace = placeRepository.findById(placeId).orElseThrow(()-> new RuntimeException("해당 아이디 음식점 없음"));
-        User userInfo = userRepository.findByEmail(placeInfo.get("email").toString()).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-        Code category = codeRepository.findById(Long.valueOf(placeInfo.get("category").toString())).orElseThrow(()-> new RuntimeException("그런 코드 없음"));
+        Place editPlace = placeFilterService.findPlaceById(placeId);
+        User userInfo = userService.findUserByEmail(placeInfo.get("email").toString());
+        Code category = codeService.findCodeById(Long.valueOf(placeInfo.get("category").toString()));
         editPlace.update(placeInfo.get("name").toString(), userInfo, category,
                 placeInfo.get("location").toString(),
                 placeInfo.get("phone").toString(),
@@ -158,9 +147,9 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
 
         /* 음식점 메뉴 테이블 데이터 수정 */
         List<PlaceMenu> asIsMenu = placeMenuRepository.findByPlaceId(placeId);
-        if(menuItems.size() > asIsMenu.size() ){
-            for(int i = 0; i < menuItems.size(); i++){
-                if(i < asIsMenu.size()) {
+        if (menuItems.size() > asIsMenu.size()) {
+            for (int i = 0; i < menuItems.size(); i++) {
+                if (i < asIsMenu.size()) {
                     Map<String, Object> menuItem = menuItems.get(i);
                     PlaceMenu toBeMenu = asIsMenu.get(i);
                     toBeMenu.update(menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
@@ -170,15 +159,15 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
                     placeMenuRepository.save(toBeMenu);
                 }
             }
-        } else if( menuItems.size() == asIsMenu.size() ) {
-            for(int i = 0; i < menuItems.size(); i++) {
+        } else if (menuItems.size() == asIsMenu.size()) {
+            for (int i = 0; i < menuItems.size(); i++) {
                 Map<String, Object> menuItem = menuItems.get(i);
                 PlaceMenu toBeMenu = asIsMenu.get(i);
                 toBeMenu.update(menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
             }
         } else {
-            for(int i = 0; i < asIsMenu.size(); i++) {
-                if(i < menuItems.size()){
+            for (int i = 0; i < asIsMenu.size(); i++) {
+                if (i < menuItems.size()) {
                     Map<String, Object> menuItem = menuItems.get(i);
                     PlaceMenu toBeMenu = asIsMenu.get(i);
                     toBeMenu.update(menuItem.get("menu").toString(), Integer.parseInt(menuItem.get("price").toString()));
@@ -213,7 +202,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
     }
 
     public void hasRole(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findUserByEmail(email);
         if (!user.hasRole("OWNER")) {
             throw new DiningApplicationException(ErrorCode.OWNER_PERMISSION_DENIED);
         }

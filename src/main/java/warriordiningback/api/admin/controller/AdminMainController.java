@@ -1,6 +1,6 @@
 package warriordiningback.api.admin.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,17 +9,15 @@ import warriordiningback.api.admin.service.AdminMainService;
 
 import java.util.Map;
 
-@RestController
 @RequestMapping("/api/admin")
+@RestController
+@RequiredArgsConstructor
 public class AdminMainController implements AdminMainControllerDocs {
 
-    @Autowired
-    private AdminMainService adminMainService;
+    private final AdminMainService adminMainService;
 
-    @GetMapping("/")
+    @GetMapping
     public Map<String, Object> mainPage() {
         return adminMainService.mainPage();
     }
-
-
 }
