@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.api.code.CodeService;
 import warriordiningback.api.restaurant.service.PlaceFilterService;
@@ -21,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminPlaceServiceImp implements AdminPlaceService {
 
@@ -38,17 +40,11 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Place> resPlaces;
         if (searchKeyword != null && !searchKeyword.isEmpty()) {
-            switch (searchType) {
-                case "name":
-                    resPlaces = placeRepository.findByNameContainingOrderByNameAsc(searchKeyword, pageable);
-                    break;
-                case "location":
-                    resPlaces = placeRepository.findByAddressNewContainingOrderByNameAsc(searchKeyword, pageable);
-                    break;
-                default:
-                    resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
-                    break;
-            }
+            resPlaces = switch (searchType) {
+                case "name" -> placeRepository.findByNameContainingOrderByNameAsc(searchKeyword, pageable);
+                case "location" -> placeRepository.findByAddressNewContainingOrderByNameAsc(searchKeyword, pageable);
+                default -> placeRepository.findAllByOrderByNameAsc(pageable);
+            };
         } else {
             resPlaces = placeRepository.findAllByOrderByNameAsc(pageable);
         }
@@ -68,6 +64,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> placeAdd(MultipartFile[] files, String menuItemsJson, String placeInfoJson) {
 
         // JSON 문자열을 List<Map>으로 변환
@@ -117,6 +114,7 @@ public class AdminPlaceServiceImp implements AdminPlaceService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> placeEdit(Long placeId, MultipartFile[] files, String existingImagesJson, String menuItemsJson, String placeInfoJson) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map<String, Object>> existingImages;
