@@ -24,6 +24,7 @@ public enum ErrorCode {
     FLAG_NOT_FOUND(HttpStatus.NOT_FOUND, "가입경로를 찾을 수 없습니다. 고객센터에 문의해주세요."),
 
     //403,
+    RESERVATION_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "음식점 주인은 본인 음식점 예약을 할 수 없습니다."),
     OWNER_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "해당 사용자에게 OWNER 권한이 없습니다."),
     SOCIAL_LOGIN_NOT_ALLOWED(HttpStatus.FORBIDDEN, "소셜 로그인 사용자는 비밀번호 찾기를 할 수 없습니다. 해당 플랫폼을 이용해주세요.");
 
