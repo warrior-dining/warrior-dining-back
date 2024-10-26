@@ -72,7 +72,7 @@ public class AdminReservationServiceImp implements AdminReservationService {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
 
-        Code code = null;
+        Code code;
         if (statusMap.get("status") != null && statusMap.get("status") == 14) {
             code = codeService.findCodeById(13L);
         } else {
