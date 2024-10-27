@@ -1,5 +1,6 @@
 package warriordiningback.api.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,27 +22,28 @@ public class UserReservationController {
     private UserReservationService userReservationService;
 
     @GetMapping("/")
-    public Map<String, Object> myReservationList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable){
+    public Map<String, Object> myReservationList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
         return userReservationService.myReservationList(userDetails, pageable);
     }
 
     @PostMapping("/")
-    public Map<String, Object> reservationAdd(@RequestBody UserReservationAddRequest reqData){
+    public Map<String, Object> reservationAdd(@RequestBody @Valid UserReservationAddRequest reqData) {
         return userReservationService.reservationAdd(reqData);
     }
 
     @GetMapping("/{reservationId:[0-9]+}")
-    public Map<String, Object> myReservationInfo(@PathVariable("reservationId") Long reservationId){
+    public Map<String, Object> myReservationInfo(@PathVariable("reservationId") Long reservationId) {
         return userReservationService.myReservationInfo(reservationId);
     }
 
     @PutMapping("/{reservationId:[0-9]+}")
-    public Map<String, Object> myReservationEdit(@PathVariable("reservationId") Long reservationId, @RequestBody UserReservationEditRequest reqData){
+    public Map<String, Object> myReservationEdit(@PathVariable("reservationId") Long reservationId,
+                                                 @RequestBody @Valid UserReservationEditRequest reqData) {
         return userReservationService.myreservationEdit(reservationId, reqData);
     }
 
     @DeleteMapping("/{reservationId:[0-9]+}")
-    public Map<String, Object> myReservationDelete(@PathVariable("reservationId") Long reservationId){
+    public Map<String, Object> myReservationDelete(@PathVariable("reservationId") Long reservationId) {
         return userReservationService.myReservationDelete(reservationId);
     }
 }

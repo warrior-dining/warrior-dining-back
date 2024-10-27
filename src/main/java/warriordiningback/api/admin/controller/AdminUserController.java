@@ -34,7 +34,8 @@ public class AdminUserController {
     }
 
     @PostMapping("/info/{userId:[0-9]+}")
-    public Map<String, Object> userGrant(@PathVariable("userId") Long userId, @RequestBody Map<String, Object> role){
+    public Map<String, Object> userGrant(@PathVariable("userId") Long userId,
+                                         @RequestBody Map<String, Object> role){
         return adminUserService.handleRole(userId, role);
     }
 
