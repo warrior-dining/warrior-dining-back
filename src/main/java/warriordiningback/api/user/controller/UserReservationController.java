@@ -27,10 +27,8 @@ public class UserReservationController {
     }
 
     @PostMapping("/")
-    public Map<String, Object> reservationAdd(@AuthenticationPrincipal UserDetails,
+    public Map<String, Object> reservationAdd(@AuthenticationPrincipal UserDetails userDetails,
                                               @RequestBody @Valid UserReservationAddRequest reqData) {
-        return userReservationService.reservationAdd(reqData);
-    public Map<String, Object> reservationAdd( userDetails, @RequestBody UserReservationAddRequest reqData){
         return userReservationService.reservationAdd(userDetails, reqData);
     }
 
