@@ -1,15 +1,14 @@
 package warriordiningback.api.admin.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.admin.dto.ReservationResponse;
+import warriordiningback.api.code.CodeService;
 import warriordiningback.domain.Code;
-import warriordiningback.domain.CodeRepository;
 import warriordiningback.domain.reservation.Reservation;
 import warriordiningback.domain.reservation.ReservationQueryRepository;
 import warriordiningback.domain.reservation.ReservationRepository;
@@ -21,19 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AdminReservationServiceImp implements AdminReservationService {
 
-    @Autowired
-    private ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
+    private final ReservationQueryRepository reservationQueryRepository;
 
-    @Autowired
-    private ReservationQueryRepository reservationQueryRepository;
-
-    @Autowired
-    private CodeRepository codeRepository;
+    private final CodeService codeService;
 
     @Override
     public Map<String, Object> reservationList(String searchType, String searchKeyword, String status, Pageable pageable) {
@@ -42,24 +37,16 @@ public class AdminReservationServiceImp implements AdminReservationService {
         Page<Reservation> searchReservation;
 
         if (status != null && !status.isEmpty()) {
-            Code code = codeRepository.findById(Long.parseLong(status)).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+            Code code = codeService.findCodeById(Long.parseLong(status));
             searchReservation = reservationRepository.findAllByCodeOrderByCreatedAtDesc(pageable, code);
             resultMap.put("status", true);
         } else if (searchKeyword != null && !searchKeyword.isEmpty()) {
-            switch (searchType) {
-                case "id":
-                    searchReservation = reservationRepository.findById(Long.parseLong(searchKeyword), pageable);
-                    break;
-                case "name":
-                    searchReservation = reservationQueryRepository.findAllByUserName(searchKeyword, pageable);
-                    break;
-                case "place":
-                    searchReservation = reservationQueryRepository.findAllByPlaceName(searchKeyword, pageable);
-                    break;
-                default:
-                    searchReservation = reservationRepository.findAllByOrderByCreatedAtDesc(pageable);
-                    break;
-            }
+            searchReservation = switch (searchType) {
+                case "id" -> reservationRepository.findById(Long.parseLong(searchKeyword), pageable);
+                case "name" -> reservationQueryRepository.findAllByUserName(searchKeyword, pageable);
+                case "place" -> reservationQueryRepository.findAllByPlaceName(searchKeyword, pageable);
+                default -> reservationRepository.findAllByOrderByCreatedAtDesc(pageable);
+            };
             resultMap.put("status", true);
         } else {
             searchReservation = reservationRepository.findAllByOrderByCreatedAtDesc(pageable);
@@ -85,9 +72,9 @@ public class AdminReservationServiceImp implements AdminReservationService {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
 
-        Code code = null;
+        Code code;
         if (statusMap.get("status") != null && statusMap.get("status") == 14) {
-            code = codeRepository.findById(13L).orElseThrow(() -> new RuntimeException());
+            code = codeService.findCodeById(13L);
         } else {
             resultMap.put("message", "잘못 요청한듯");
             return resultMap;
@@ -101,5 +88,4 @@ public class AdminReservationServiceImp implements AdminReservationService {
         }
         return resultMap;
     }
-
 }

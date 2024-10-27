@@ -9,8 +9,8 @@ import warriordiningback.api.admin.service.AdminMainService;
 
 import java.util.Map;
 
-@RequestMapping("/api/admin")
 @RestController
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminMainController implements AdminMainControllerDocs {
 

@@ -8,8 +8,8 @@ import warriordiningback.api.admin.service.AdminInquiryService;
 import java.util.Map;
 
 
-@RequestMapping("/api/admin/inquiries")
 @RestController
+@RequestMapping("/api/admin/inquiries")
 @RequiredArgsConstructor
 public class AdminInquiryController {
 

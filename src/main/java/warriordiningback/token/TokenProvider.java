@@ -61,7 +61,7 @@ public class TokenProvider {
                 .issuer("ACCESS")
                 .claim("flag", flag)
                 .claim("auth", authorities)
-                .expiration(getDate(30))
+                .expiration(getDate(1))
                 .issuedAt(Calendar.getInstance().getTime())
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
@@ -161,6 +161,8 @@ public class TokenProvider {
             flag = ((CustomUserDetails) authentication.getPrincipal()).getFlag();
         } else if (authentication.getPrincipal() instanceof CustomOAuthUser) {
             flag = ((CustomOAuthUser) authentication.getPrincipal()).getFlag();
+        } else if (authentication.getPrincipal() instanceof User) {
+            flag = Long.valueOf(parseClaims(refreshToken).get("flag").toString());
         }
 
         Map<String, String> header = new HashMap<>();
