@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserReservationAddRequest {
 
-    @NotBlank
-    private String userEmail;
     @Positive
     private Long placeId;
     @NotBlank

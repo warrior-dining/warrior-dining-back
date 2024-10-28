@@ -29,7 +29,7 @@ public interface ReviewQueryRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByPlaceName(@Param("placeName") String placeName, Pageable pageable);
 
     @Query("SELECT ROUND(AVG(r.rating), 1) FROM Review r WHERE r.createdAt > :date ")
-    double avgRecentRating(@Param("date") LocalDateTime date);
+    Double avgRecentRating(@Param("date") LocalDateTime date);
 
     @Query("SELECT r FROM Review r JOIN r.user u WHERE u.id = :userId and r.isDeleted = false ORDER BY r.createdAt DESC")
     Page<Review> findByUserAndIsDeleted(@Param("userId") Long userId, Pageable pageable);

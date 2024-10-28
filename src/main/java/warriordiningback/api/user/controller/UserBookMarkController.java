@@ -25,8 +25,8 @@ public class UserBookMarkController {
     }
 
     @PutMapping("/")
-    public Map<String, Object> myBookMarkAdd(@RequestBody Map<String, Object> requestBody) {
-        return userBookMarkService.myBookMarkAdd(requestBody);
+    public Map<String, Object> myBookMarkAdd(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Object> requestBody) {
+        return userBookMarkService.myBookMarkAdd(userDetails, requestBody);
     }
 
     @DeleteMapping("/")

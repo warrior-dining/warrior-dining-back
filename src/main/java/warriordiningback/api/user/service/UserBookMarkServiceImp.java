@@ -63,9 +63,9 @@ public class UserBookMarkServiceImp implements UserBookMarkService {
 
     @Override
     @Transactional
-    public Map<String, Object> myBookMarkAdd(Map<String, Object> reqData) {
+    public Map<String, Object> myBookMarkAdd(UserDetails userDetails, Map<String, Object> reqData) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        User user = userRepository.findByEmail(reqData.get("email").toString()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
         Place place = placeRepository.findById(Long.parseLong(reqData.get("placeId").toString())).orElseThrow(() -> new DiningApplicationException(ErrorCode.PLACE_NOT_FOUND));
         user.getBookmarks().add(place);
         return resultMap;

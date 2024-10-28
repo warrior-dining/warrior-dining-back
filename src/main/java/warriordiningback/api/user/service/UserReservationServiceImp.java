@@ -71,7 +71,7 @@ public class UserReservationServiceImp implements UserReservationService{
 
     @Override
     @Transactional
-    public Map<String, Object> reservationAdd(UserReservationAddRequest reqData) {
+    public Map<String, Object> reservationAdd(UserDetails userDetails, UserReservationAddRequest reqData) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("status", false);
         User userInfo;
@@ -79,27 +79,32 @@ public class UserReservationServiceImp implements UserReservationService{
         Code code;
         Reservation reservationInfo = new Reservation();
         if(reqData != null){
-            userInfo = userRepository.findByEmail(reqData.getUserEmail()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
-            placeInfo = placeRepository.findById(reqData.getPlaceId()).orElseThrow(() -> new DiningApplicationException(ErrorCode.PLACE_NOT_FOUND));
-            code = codeRepository.findById(14L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
+                userInfo = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new DiningApplicationException(ErrorCode.USER_NOT_FOUND));
+                placeInfo = placeRepository.findById(reqData.getPlaceId()).orElseThrow(() -> new DiningApplicationException(ErrorCode.PLACE_NOT_FOUND));
+                code = codeRepository.findById(14L).orElseThrow(() -> new DiningApplicationException(ErrorCode.CODE_NOT_FOUND));
 
-            /* Reservation Entity에 맞춰 날짜, 시간 타입 포맷 변경. 추후에 엔티티 수정시 같이 수정할 것 */
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            try {
-                Date reservationDate = dateFormat.parse(reqData.getReservationDate());
-                Date reservationTime = dateTimeFormat.parse(reqData.getReservationTime());
+                if(!(userDetails.getUsername().equals(placeInfo.getUser().getEmail()))) {
 
-                reservationInfo.create(reservationDate, reservationTime, reqData.getCount(), reqData.getOrderNote(), userInfo, placeInfo, code);
-                reservationRepository.save(reservationInfo);
+                    /* Reservation Entity에 맞춰 날짜, 시간 타입 포맷 변경. 추후에 엔티티 수정시 같이 수정할 것 */
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    try {
+                        Date reservationDate = dateFormat.parse(reqData.getReservationDate());
+                        Date reservationTime = dateTimeFormat.parse(reqData.getReservationTime());
 
-                resultMap.put("status", true);
-                resultMap.put("results", reservationInfo);
-            } catch (ParseException e) {
-                resultMap.put("comment", "날짜 또는 시간 형식이 올바르지 않습니다.");
-            };
+                        reservationInfo.create(reservationDate, reservationTime, reqData.getCount(), reqData.getOrderNote(), userInfo, placeInfo, code);
+                        reservationRepository.save(reservationInfo);
+
+                        resultMap.put("status", true);
+                        resultMap.put("results", reservationInfo);
+                    } catch (ParseException e) {
+                        resultMap.put("comment", "날짜 또는 시간 형식이 올바르지 않습니다.");
+                    }
+                } else {
+                    throw new DiningApplicationException(ErrorCode.RESERVATION_PERMISSION_DENIED);
+                }
         } else {
-            resultMap.put("comment", "실패다.");
+            resultMap.put("comment", "필수 데이터가 입력되지 않았습니다.");
         }
         return resultMap;
     }
