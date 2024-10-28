@@ -51,5 +51,15 @@
 
 <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT"> <img src="https://img.shields.io/badge/Spring_Security-%6DB33F.svg?style=for-the-badge&logo=SpringSecurity&logoColor=white" alt="SpringSecurity"><img src="https://img.shields.io/badge/oauth2.0-black?style=for-the-badge" alt="oauth2.0">
 
----
+# API 명세서
 
+## USER
+
+| Description | HTTP Method | Endpoint           | 토큰  | Description |
+|-------------|-------------|--------------------|-----|-------------|
+| 회원가입        | `POST`      | `/api/user/signup` | `X` | 회원가입        |
+| 로그인         | `POST`      | `/api/user/login`  | `X` | 로그인         |
+| 비밀번호 찾기     | `POST`      | `/api/user`        | `X` | 비밀번호 찾기     |
+| 마이페이지 내정보   | `GET`       | `/api/user`        | `O` | 마이페이지 내정보   |
+| 내정보 수정      | `PUT`       | `/api/user`        | `O` | 내정보 수정      |
+| 회원 탈퇴       | `DELETE`    | `/api/user`        | `O` | 회원 탈퇴       |
