@@ -12,10 +12,10 @@
 
 # Team Members (팀원 및 팀 소개)
 
-|                    오상민                    |                                           차성민                                           |                                           원요엘                                           |                                           김은서                                           |
-|:-----------------------------------------:|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|
-| <img src="img.png" alt="오상민" width="150"> | <img src="https://avatars.githubusercontent.com/u/169964868?v=4" alt="차성민" width="150"> | <img src="https://avatars.githubusercontent.com/u/170058857?v=4" alt="원요엘" width="150"> | <img src="https://avatars.githubusercontent.com/u/170059046?v=4" alt="김은서" width="150"> |
-|    [GitHub](https://github.com/o-tao)     |                         [GitHub](https://github.com/JJAJJAKIM)                          |                           [GitHub](https://github.com/myin98)                           |                          [GitHub](https://github.com/mirinaes)                          |
+|                                           오상민                                           |                                           차성민                                           |                                           원요엘                                           |                                           김은서                                           |
+|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|
+| <img src="https://avatars.githubusercontent.com/u/170058824?v=4" alt="오상민" width="150"> | <img src="https://avatars.githubusercontent.com/u/169964868?v=4" alt="차성민" width="150"> | <img src="https://avatars.githubusercontent.com/u/170058857?v=4" alt="원요엘" width="150"> | <img src="https://avatars.githubusercontent.com/u/170059046?v=4" alt="김은서" width="150"> |
+|                           [GitHub](https://github.com/o-tao)                            |                         [GitHub](https://github.com/JJAJJAKIM)                          |                           [GitHub](https://github.com/myin98)                           |                          [GitHub](https://github.com/mirinaes)                          |
 
 ## 주요 기능
 
