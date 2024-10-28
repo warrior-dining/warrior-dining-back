@@ -51,7 +51,7 @@ public class AdminMainServiceImp implements AdminMainService {
         results.put("countRecentReservations", countRecentReservations);
 
         // 최근 30일 이내 생성된 리뷰의 별점 평균
-        double avgRecentRating = reviewQueryRepository.avgRecentRating(thirtyDaysAgo);
+        Double avgRecentRating = reviewQueryRepository.avgRecentRating(thirtyDaysAgo);
         results.put("avgRecentRating", avgRecentRating);
 
         // 최근 30일 이내 가입한 사용자 카운트
