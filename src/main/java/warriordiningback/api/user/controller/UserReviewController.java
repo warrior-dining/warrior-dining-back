@@ -1,24 +1,20 @@
 package warriordiningback.api.user.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.user.service.UserReviewService;
-import warriordiningback.domain.review.ReviewRepository;
 
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/member/reviews")
+@RequestMapping("/api/user/reviews")
+@RequiredArgsConstructor
 public class UserReviewController {
 
-    @Autowired
-    private ReviewRepository reviewRepository;
-
-    @Autowired
-    private UserReviewService userReviewService;
+    private final UserReviewService userReviewService;
 
     @GetMapping("/reservation/{reservationId}")
     public Map<String, Object> ReservationInfo(@PathVariable("reservationId") Long reservationId) {
@@ -31,7 +27,7 @@ public class UserReviewController {
         return userReviewService.createReview(reservationId, content);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public Map<String, Object> myReviewList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
         return userReviewService.myReviewList(userDetails, pageable);
     }

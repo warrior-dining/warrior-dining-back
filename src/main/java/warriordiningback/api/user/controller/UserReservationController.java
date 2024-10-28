@@ -1,8 +1,7 @@
 package warriordiningback.api.user.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,20 +12,19 @@ import warriordiningback.api.user.service.UserReservationService;
 
 import java.util.Map;
 
-@Slf4j
 @RestController
-@RequestMapping("/api/member/reservation")
+@RequestMapping("/api/user/reservation")
+@RequiredArgsConstructor
 public class UserReservationController {
 
-    @Autowired
-    private UserReservationService userReservationService;
+    private final UserReservationService userReservationService;
 
-    @GetMapping("/")
+    @GetMapping
     public Map<String, Object> myReservationList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
         return userReservationService.myReservationList(userDetails, pageable);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public Map<String, Object> reservationAdd(@AuthenticationPrincipal UserDetails userDetails,
                                               @RequestBody @Valid UserReservationAddRequest reqData) {
         return userReservationService.reservationAdd(userDetails, reqData);

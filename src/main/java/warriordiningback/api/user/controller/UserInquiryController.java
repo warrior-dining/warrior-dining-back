@@ -1,6 +1,6 @@
 package warriordiningback.api.user.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,13 +10,13 @@ import warriordiningback.api.user.service.UserInquiryService;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/member/inquiries")
+@RequestMapping("/api/user/inquiries")
+@RequiredArgsConstructor
 public class UserInquiryController {
 
-    @Autowired
-    private UserInquiryService inquiryService;
+    private final UserInquiryService inquiryService;
 
-    @GetMapping("/")
+    @GetMapping
     public Map<String, Object> inquiryList(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
         return inquiryService.inquiryList(userDetails, pageable);
     }
@@ -32,7 +32,7 @@ public class UserInquiryController {
         return inquiryService.inquiryInfoEdit(id, inquiry);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public Map<String, Object> newInquiry(@RequestBody Map<String, Object> newInquiries) {
         return inquiryService.newInquiry(newInquiries);
     }
