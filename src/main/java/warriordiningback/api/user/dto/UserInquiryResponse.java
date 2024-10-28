@@ -11,5 +11,7 @@ public class UserInquiryResponse {
 	private Long id;
 	private String title;
 	private String content;
+	private boolean isAnswer;
+	private String answerContent;
 	
 }

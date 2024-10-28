@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import warriordiningback.api.user.dto.UserInquiryResponse;
 import warriordiningback.domain.Code;
-import warriordiningback.domain.inquiry.Inquiry;
-import warriordiningback.domain.inquiry.InquiryQueryRepository;
-import warriordiningback.domain.inquiry.InquiryRepository;
+import warriordiningback.domain.inquiry.*;
 import warriordiningback.domain.user.User;
 import warriordiningback.domain.user.UserRepository;
 import warriordiningback.exception.DiningApplicationException;
@@ -32,6 +30,9 @@ public class UserInquiryServiceImp implements UserInquiryService {
     @Autowired
     private InquiryQueryRepository inquiryQueryRepository;
 
+    @Autowired
+    private InquiriesAnswerRepository answerRepository;
+
     @Override
     public Map<String, Object> inquiryList(UserDetails userDetails, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -52,6 +53,14 @@ public class UserInquiryServiceImp implements UserInquiryService {
         inquiryResponse.setId(inquiry.getId());
         inquiryResponse.setTitle(inquiry.getTitle());
         inquiryResponse.setContent(inquiry.getContent());
+        inquiryResponse.setAnswer(false);
+        inquiryResponse.setAnswerContent("");
+
+        if(inquiry.getCode().getId() == 16L){
+            InquiriesAnswer answer = answerRepository.findByInquiry(inquiry).orElseThrow(() -> new DiningApplicationException(ErrorCode.INQUIRY_INFO_NOT_FOUND));
+            inquiryResponse.setAnswer(true);
+            inquiryResponse.setAnswerContent(answer.getContent());
+        }
 
         resultMap.put("results", inquiryResponse);
         return resultMap;
