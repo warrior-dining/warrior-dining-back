@@ -24,6 +24,8 @@ public class SignUpRequest {
     @NotBlank(message = "이름을 입력하세요.")
     private String name;
 
+    @Pattern(regexp = "^(19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])$",
+            message = "생년월일은 년(4자리)월(2자리)일(2자리) 형식으로 입력하세요.")
     @NotBlank(message = "생년월일을 입력하세요.")
     private String birth;
 
