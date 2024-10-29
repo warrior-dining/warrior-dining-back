@@ -68,13 +68,11 @@
 ## 환경 세팅
 
 ### git clone
-
 ```text
 git clone https://github.com/warrior-dining/warrior-dining-back.git
 ```
 
-### .env 세팅
-
+###  .env 세팅
 ```dotenv
 DB_URL=jdbc:mariadb://localhost:13306/dining
 DB_USERNAME=root
@@ -94,10 +92,9 @@ NAVER_CLIENT_SECRET={NAVER_CLIENT_SECRET}
 
 ```
 
-### DB 환경 세팅
+###  DB 환경 세팅
 
 - docker-compose.yml
-
 ```yaml
 services:
   mysql:
@@ -115,27 +112,16 @@ services:
       TZ: ${DOCKER_TZ}
 
 ```
-
 - docker-compose.yml 실행 명령어
-
 ```text
 docker-compose up -d
 ```
 
-### DB 사용자 생성
+###  DB 사용자 생성
 
 ```sql
-GRANT
-ALL
-PRIVILEGES
-ON
-dining
-.
-*
-TO
-'warrior'@'%' IDENTIFIED BY 'warrior!@3';
-SELECT *
-FROM mysql.user;
+GRANT ALL PRIVILEGES ON dining.* TO 'warrior'@'%' IDENTIFIED BY 'warrior!@3';
+SELECT * FROM mysql.user;
 ```
 
 - resources/JOB.sql안의 ddl 생성 후 실행
