@@ -1,4 +1,4 @@
-package warriordiningback.api.restaurant.service;
+package warriordiningback.api.place.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

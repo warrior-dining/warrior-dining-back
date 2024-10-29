@@ -1,4 +1,4 @@
-package warriordiningback.api.restaurant.dto;
+package warriordiningback.api.place.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

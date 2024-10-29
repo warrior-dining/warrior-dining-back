@@ -1,4 +1,4 @@
-package warriordiningback.api.restaurant.service;
+package warriordiningback.api.place.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import warriordiningback.api.restaurant.dto.MonthReservationData;
-import warriordiningback.api.restaurant.dto.TopReservationData;
+import warriordiningback.api.place.dto.MonthReservationData;
+import warriordiningback.api.place.dto.TopReservationData;
 import warriordiningback.domain.reservation.ReservationQueryRepository;
 
 import java.time.LocalDate;

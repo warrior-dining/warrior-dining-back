@@ -1,9 +1,9 @@
-package warriordiningback.api.restaurant.service;
+package warriordiningback.api.place.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import warriordiningback.api.restaurant.dto.ReviewData;
+import warriordiningback.api.place.dto.ReviewData;
 import warriordiningback.domain.review.ReviewQueryRepository;
 
 import java.util.List;

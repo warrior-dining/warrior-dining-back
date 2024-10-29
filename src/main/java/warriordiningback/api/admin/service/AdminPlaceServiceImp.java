@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.api.code.CodeService;
-import warriordiningback.api.restaurant.service.PlaceFilterService;
+import warriordiningback.api.place.service.PlaceFilterService;
 import warriordiningback.api.user.service.UserService;
 import warriordiningback.domain.Code;
 import warriordiningback.domain.place.*;
