@@ -8,4 +8,5 @@ import java.util.Map;
 public interface OwnerReservationService {
 
     public Map<String, Object> ownerMain(String status, UserDetails userDetails, Pageable pageable);
+    public Map<String, Object> updateReservation(Long id, Map<String, Long> statusMap);
 }
