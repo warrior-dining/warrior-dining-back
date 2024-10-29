@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import warriordiningback.api.place.docs.PlaceControllerDocs;
 import warriordiningback.api.place.dto.MonthReservationData;
@@ -14,6 +15,7 @@ import warriordiningback.api.place.service.PlaceFilterService;
 import warriordiningback.api.place.service.PlaceRatingService;
 import warriordiningback.api.place.service.PlaceReviewService;
 import warriordiningback.api.place.service.PlaceSearchService;
+import warriordiningback.components.FileComponent;
 import warriordiningback.domain.place.PlaceDetailInfo;
 import warriordiningback.domain.place.PlaceInfo;
 import warriordiningback.domain.place.PlaceRepository;
@@ -31,6 +33,7 @@ public class PlaceController implements PlaceControllerDocs {
     private final PlaceSearchService placeSearchService;
     private final PlaceFilterService placeFilterService;
     private final PlaceReviewService placeReviewService;
+    private final FileComponent fileComponent;
 
     @GetMapping
     public Page<PlaceInfo> placeList(
@@ -74,6 +77,12 @@ public class PlaceController implements PlaceControllerDocs {
             @RequestParam(required = false) Double maxPrice,
             @PageableDefault(size = 10) Pageable pageable) {
         return placeSearchService.searchPlaces(keyword, categoryId, minPrice, maxPrice, pageable);
+    }
+
+    // placeController에 새로 추가한 부
+    @GetMapping("/view")
+    public ResponseEntity<?> view(@RequestParam("url") String url) {
+        return fileComponent.getFile(url);
     }
 
 }
