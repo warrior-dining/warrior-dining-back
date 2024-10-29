@@ -68,11 +68,13 @@
 ## 환경 세팅
 
 ### git clone
+
 ```text
 git clone https://github.com/warrior-dining/warrior-dining-back.git
 ```
 
-###  .env 세팅
+### .env 세팅
+
 ```dotenv
 DB_URL=jdbc:mariadb://localhost:13306/dining
 DB_USERNAME=root
@@ -92,9 +94,10 @@ NAVER_CLIENT_SECRET={NAVER_CLIENT_SECRET}
 
 ```
 
-###  DB 환경 세팅
+### DB 환경 세팅
 
 - docker-compose.yml
+
 ```yaml
 services:
   mysql:
@@ -112,16 +115,27 @@ services:
       TZ: ${DOCKER_TZ}
 
 ```
+
 - docker-compose.yml 실행 명령어
+
 ```text
 docker-compose up -d
 ```
 
-###  DB 사용자 생성
+### DB 사용자 생성
 
 ```sql
-GRANT ALL PRIVILEGES ON dining.* TO 'warrior'@'%' IDENTIFIED BY 'warrior!@3';
-SELECT * FROM mysql.user;
+GRANT
+ALL
+PRIVILEGES
+ON
+dining
+.
+*
+TO
+'warrior'@'%' IDENTIFIED BY 'warrior!@3';
+SELECT *
+FROM mysql.user;
 ```
 
 - resources/JOB.sql안의 ddl 생성 후 실행
@@ -130,13 +144,13 @@ SELECT * FROM mysql.user;
 
 API 엔드포인트 상세 문서는 [Swagger](http://localhost:8080/swagger-ui/index.html)에서 확인할 수 있습니다.
 
-| Description    | HTTP Method | Endpoint            | QueryParameter                                                 |
-|----------------|-------------|---------------------|----------------------------------------------------------------|
-| **예약TOP 조회**   | `GET`       | `/api/place/top`    |                                                                |
-| **이달의 맛집 조회**  | `GET`       | `/api/place/month`  |                                                                |
-| **음식점 전체 리스트** | `GET`       | `/api/place`        | ?page=0                                                        |
-| **음식점 상단바 검색** | `GET`       | `/api/place/search` | ?keyword=검색어&page=3&categoryId=5&minPrice=20001&maxPrice=50000 |
-| **음식점 상세**     | `GET`       | `/api/place/{id}`   |                                                                |
+| Description    | HTTP Method | Endpoint            |
+|----------------|-------------|---------------------|
+| **예약TOP 조회**   | `GET`       | `/api/place/top`    |
+| **이달의 맛집 조회**  | `GET`       | `/api/place/month`  |
+| **음식점 전체 리스트** | `GET`       | `/api/place`        |
+| **음식점 상단바 검색** | `GET`       | `/api/place/search` |
+| **음식점 상세**     | `GET`       | `/api/place/{id}`   |
 
 ## USER
 
@@ -148,29 +162,29 @@ API 엔드포인트 상세 문서는 [Swagger](http://localhost:8080/swagger-ui/
 
 ### 마이페이지
 
-| Description          | HTTP Method | Endpoint                                        | QueryParameter  |
-|----------------------|-------------|-------------------------------------------------|-----------------|
-| **마이페이지 내정보**        | `GET`       | `/api/user`                                     |                 |
-| **내정보 수정**           | `PUT`       | `/api/user`                                     |                 |
-| **회원 탈퇴**            | `DELETE`    | `/api/user`                                     |                 |
-| **마이페이지 즐겨찾기 리스트**   | `GET`       | `/api/user/bookmarks`                           | ?page=0&size=4  |
-| **즐겨찾기 추가**          | `POST`      | `/api/user/bookmarks`                           |                 |
-| **즐겨찾기 삭제**          | `DELETE`    | `/api/user/bookmarks`                           | ?placeId=1      |
-| **마이페이지 문의사항 리스트**   | `GET`       | `/api/user/inquiries`                           | ?page=0&size=10 |
-| **문의사항 상세**          | `GET`       | `/api/user/inquiries/{id}`                      |                 |
-| **문의사항 작성**          | `POST`      | `/api/user/inquiries`                           |                 |
-| **문의사항 수정**          | `PUT`       | `/api/user/inquiries/{id}`                      |                 |
-| **마이페이지 음식점 예약 리스트** | `GET`       | `/api/user/reservation`                         | ?page=0&size=3  |
-| **음식점 예약 상세**        | `GET`       | `/api/user/reservation/{reservationId}`         |                 |
-| **음시점 예약 추가**        | `POST`      | `/api/user/reservation`                         |                 |
-| **음식점 예약 수정**        | `PUT`       | `/api/user/reservation/{reservationId}`         |                 |
-| **음식점 예약 취소**        | `DELETE`    | `/api/user/reservation/{reservationId}`         |                 |
-| **마이페이지 리뷰 리스트**     | `GET`       | `/api/user/reviews`                             | ?page=0&size=5  |
-| **리뷰 수정 상세**         | `GET`       | `/api/user/reviews/{id}`                        |                 |
-| **리뷰 등록 상세**         | `GET`       | `/api/user/reviews/reservation/{reservationId}` |                 |
-| **리뷰 등록**            | `POST`      | `/api/user/reviews/reservation/{reservationId}` |                 |
-| **리뷰 수정**            | `PUT`       | `/api/user/reviews/{id}`                        |                 |
-| **리뷰 삭제**            | `DELETE`    | `/api/user/reviews/{id}`                        |                 |
+| Description          | HTTP Method | Endpoint                                        |
+|----------------------|-------------|-------------------------------------------------|
+| **마이페이지 내정보**        | `GET`       | `/api/user`                                     |
+| **내정보 수정**           | `PUT`       | `/api/user`                                     |
+| **회원 탈퇴**            | `DELETE`    | `/api/user`                                     |
+| **마이페이지 즐겨찾기 리스트**   | `GET`       | `/api/user/bookmarks`                           |
+| **즐겨찾기 추가**          | `POST`      | `/api/user/bookmarks`                           |
+| **즐겨찾기 삭제**          | `DELETE`    | `/api/user/bookmarks`                           |
+| **마이페이지 문의사항 리스트**   | `GET`       | `/api/user/inquiries`                           |
+| **문의사항 상세**          | `GET`       | `/api/user/inquiries/{id}`                      |
+| **문의사항 작성**          | `POST`      | `/api/user/inquiries`                           |
+| **문의사항 수정**          | `PUT`       | `/api/user/inquiries/{id}`                      |
+| **마이페이지 음식점 예약 리스트** | `GET`       | `/api/user/reservation`                         |
+| **음식점 예약 상세**        | `GET`       | `/api/user/reservation/{reservationId}`         |
+| **음시점 예약 추가**        | `POST`      | `/api/user/reservation`                         |
+| **음식점 예약 수정**        | `PUT`       | `/api/user/reservation/{reservationId}`         |
+| **음식점 예약 취소**        | `DELETE`    | `/api/user/reservation/{reservationId}`         |
+| **마이페이지 리뷰 리스트**     | `GET`       | `/api/user/reviews`                             |
+| **리뷰 수정 상세**         | `GET`       | `/api/user/reviews/{id}`                        |
+| **리뷰 등록 상세**         | `GET`       | `/api/user/reviews/reservation/{reservationId}` |
+| **리뷰 등록**            | `POST`      | `/api/user/reviews/reservation/{reservationId}` |
+| **리뷰 수정**            | `PUT`       | `/api/user/reviews/{id}`                        |
+| **리뷰 삭제**            | `DELETE`    | `/api/user/reviews/{id}`                        |
 
 ## ADMIN
 
@@ -180,49 +194,49 @@ API 엔드포인트 상세 문서는 [Swagger](http://localhost:8080/swagger-ui/
 
 ### 회원 관리
 
-| Description     | HTTP Method | Endpoint                    | QueryParameter                         |
-  |-----------------|-------------|-----------------------------|----------------------------------------|
-| **전체 회원 목록 조회** | `GET`       | `/api/admin/users`          | ?type=email&keyword=검색어&page=0&size=10 |
-| **회원 상세**       | `GET`       | `/api/admin/users/{userId}` |                                        |
-| **사용자 권한 부여**   | `POST`      | `/api/admin/users/{userId}` |                                        |
+| Description     | HTTP Method | Endpoint                    |
+  |-----------------|-------------|-----------------------------|
+| **전체 회원 목록 조회** | `GET`       | `/api/admin/users`          |
+| **회원 상세**       | `GET`       | `/api/admin/users/{userId}` |
+| **사용자 권한 부여**   | `POST`      | `/api/admin/users/{userId}` |
 
 ### 음식점 관리
 
-| Description      | HTTP Method | Endpoint                      | QueryParameter                        |
-  |------------------|-------------|-------------------------------|---------------------------------------|
-| **전체 음식점 목록 조회** | `GET`       | `/api/admin/places`           | ?type=name&keyword=검색어&page=0&size=10 |
-| **음식점 상세**       | `GET`       | `/api/admin/places/{placeId}` |                                       |
-| **음식점 이미지 조회**   | `GET`       | `/api/admin/places/view`      |                                       |
-| **음식점 등록**       | `POST`      | `/api/admin/places`           |                                       |
-| **음식점 수정**       | `PUT`       | `/api/admin/places/{placeId}` |                                       |
+| Description      | HTTP Method | Endpoint                      |
+  |------------------|-------------|-------------------------------|
+| **전체 음식점 목록 조회** | `GET`       | `/api/admin/places`           |
+| **음식점 상세**       | `GET`       | `/api/admin/places/{placeId}` |
+| **음식점 이미지 조회**   | `GET`       | `/api/admin/places/view`      |
+| **음식점 등록**       | `POST`      | `/api/admin/places`           |
+| **음식점 수정**       | `PUT`       | `/api/admin/places/{placeId}` |
 
 ### 예약 관리
 
-| Description       | HTTP Method | Endpoint                       | QueryParameter                              |
-  |-------------------|-------------|--------------------------------|---------------------------------------------|
-| **전체 예약 목록 조회**   | `GET`       | `/api/admin/reservations`      | ?page=0&size=10&status=&type=id&keyword=검색어 |
-| **예약 상태값(취소) 변경** | `PATCH`     | `/api/admin/reservations/{id}` |                                             |
+| Description       | HTTP Method | Endpoint                       |
+  |-------------------|-------------|--------------------------------|
+| **전체 예약 목록 조회**   | `GET`       | `/api/admin/reservations`      |
+| **예약 상태값(취소) 변경** | `PATCH`     | `/api/admin/reservations/{id}` |
 
 ### 리뷰 관리
 
-| Description       | HTTP Method | Endpoint                  | QueryParameter                                              |
-  |-------------------|-------------|---------------------------|-------------------------------------------------------------|
-| **전체 리뷰 목록 조회**   | `GET`       | `/api/admin/reviews`      | ?searchtype=user&searchkeyword=&page=0&size=10&sorttype=검색어 |
-| **예약 상태값(취소) 변경** | `PATCH`     | `/api/admin/reviews/{id}` |                                                             |
+| Description       | HTTP Method | Endpoint                  |
+  |-------------------|-------------|---------------------------|
+| **전체 리뷰 목록 조회**   | `GET`       | `/api/admin/reviews`      |
+| **예약 상태값(취소) 변경** | `PATCH`     | `/api/admin/reviews/{id}` |
 
 ### 문의사항 관리
 
-| Description       | HTTP Method | Endpoint                    | QueryParameter                      |
-  |-------------------|-------------|-----------------------------|-------------------------------------|
-| **전체 문의사항 목록 조회** | `GET`       | `/api/admin/inquiries`      | ?type=title&keyword=&page=0&size=10 |
-| **문의사항 상세**       | `GET`       | `/api/admin/inquiries/{id}` |                                     |
-| **문의사항 답변**       | `POST`      | `/api/admin/inquiries/{id}` |                                     |
+| Description       | HTTP Method | Endpoint                    |
+  |-------------------|-------------|-----------------------------|
+| **전체 문의사항 목록 조회** | `GET`       | `/api/admin/inquiries`      |
+| **문의사항 상세**       | `GET`       | `/api/admin/inquiries/{id}` |
+| **문의사항 답변**       | `POST`      | `/api/admin/inquiries/{id}` |
 
 ## OWNER
 
 ### 예약 관리
 
-| Description       | HTTP Method | Endpoint          | QueryParameter               |
-  |-------------------|-------------|-------------------|------------------------------|
-| **예약 현황 리스트**     | `GET`       | `/api/owner`      | ?status=예약상태값&page=0&size=10 |
-| **예약 상태값(취소) 변경** | `PATCH`     | `/api/owner/{id}` |                              |
+| Description       | HTTP Method | Endpoint          |
+  |-------------------|-------------|-------------------|
+| **예약 현황 리스트**     | `GET`       | `/api/owner`      |
+| **예약 상태값(취소) 변경** | `PATCH`     | `/api/owner/{id}` |
