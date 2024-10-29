@@ -1,19 +1,21 @@
-package warriordiningback.api.restaurant.controller;
+package warriordiningback.api.place.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import warriordiningback.api.restaurant.docs.RestaurantControllerDocs;
-import warriordiningback.api.restaurant.dto.MonthReservationData;
-import warriordiningback.api.restaurant.dto.PlaceSearchData;
-import warriordiningback.api.restaurant.dto.ReviewData;
-import warriordiningback.api.restaurant.dto.TopReservationData;
-import warriordiningback.api.restaurant.service.PlaceFilterService;
-import warriordiningback.api.restaurant.service.PlaceRatingService;
-import warriordiningback.api.restaurant.service.PlaceReviewService;
-import warriordiningback.api.restaurant.service.PlaceSearchService;
+import warriordiningback.api.place.docs.PlaceControllerDocs;
+import warriordiningback.api.place.dto.MonthReservationData;
+import warriordiningback.api.place.dto.PlaceSearchData;
+import warriordiningback.api.place.dto.ReviewData;
+import warriordiningback.api.place.dto.TopReservationData;
+import warriordiningback.api.place.service.PlaceFilterService;
+import warriordiningback.api.place.service.PlaceRatingService;
+import warriordiningback.api.place.service.PlaceReviewService;
+import warriordiningback.api.place.service.PlaceSearchService;
+import warriordiningback.components.FileComponent;
 import warriordiningback.domain.place.PlaceDetailInfo;
 import warriordiningback.domain.place.PlaceInfo;
 import warriordiningback.domain.place.PlaceRepository;
@@ -22,26 +24,19 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/restaurant")
-public class RestaurantController implements RestaurantControllerDocs {
+@RequestMapping("/api/place")
+@RequiredArgsConstructor
+public class PlaceController implements PlaceControllerDocs {
 
-    @Autowired
-    private PlaceRepository placeRepository;
-
-    @Autowired
-    private PlaceRatingService placeRatingService;
-
-    @Autowired
-    private PlaceSearchService placeSearchService;
-
-    @Autowired
-    private PlaceFilterService placeFilterService;
-
-    @Autowired
-    private PlaceReviewService placeReviewService;
+    private final PlaceRepository placeRepository;
+    private final PlaceRatingService placeRatingService;
+    private final PlaceSearchService placeSearchService;
+    private final PlaceFilterService placeFilterService;
+    private final PlaceReviewService placeReviewService;
+    private final FileComponent fileComponent;
 
     @GetMapping
-    public Page<PlaceInfo> restaurantList(
+    public Page<PlaceInfo> placeList(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long minPrice,
             @RequestParam(required = false) Long maxPrice,
@@ -63,12 +58,12 @@ public class RestaurantController implements RestaurantControllerDocs {
     }
 
     @GetMapping("reviews")
-    public List<ReviewData> restaurantReviews() {
+    public List<ReviewData> placeReviews() {
         return placeReviewService.findByReview();
     }
 
     @GetMapping("/{id}")
-    public Page<PlaceDetailInfo> restaurantDetail(
+    public Page<PlaceDetailInfo> placeDetail(
             @PathVariable("id") Long id,
             @PageableDefault(size = 3) Pageable pageable) {
         return placeRepository.findAllById(id, pageable, PlaceDetailInfo.class);
@@ -82,6 +77,12 @@ public class RestaurantController implements RestaurantControllerDocs {
             @RequestParam(required = false) Double maxPrice,
             @PageableDefault(size = 10) Pageable pageable) {
         return placeSearchService.searchPlaces(keyword, categoryId, minPrice, maxPrice, pageable);
+    }
+
+    // placeController에 새로 추가한 부
+    @GetMapping("/view")
+    public ResponseEntity<?> view(@RequestParam("url") String url) {
+        return fileComponent.getFile(url);
     }
 
 }

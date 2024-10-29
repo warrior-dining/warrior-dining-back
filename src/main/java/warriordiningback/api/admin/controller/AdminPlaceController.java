@@ -2,7 +2,6 @@ package warriordiningback.api.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import warriordiningback.api.admin.service.AdminPlaceService;
@@ -38,10 +37,10 @@ public class AdminPlaceController {
         return adminPlaceService.placeAdd(files, menuItemJson, placeInfoJson);
     }
 
-    @GetMapping("/view")
-    public ResponseEntity<?> view(@RequestParam("url") String url) {
-        return fileComponent.getFile(url);
-    }
+//    @GetMapping("/view")
+//    public ResponseEntity<?> view(@RequestParam("url") String url) {
+//        return fileComponent.getFile(url);
+//    }
 
     @PutMapping("/{placeId:[0-9]+}")
     public Map<String, Object> placeEdit(@PathVariable("placeId") Long placeId,

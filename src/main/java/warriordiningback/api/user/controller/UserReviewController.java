@@ -32,22 +32,20 @@ public class UserReviewController {
         return userReviewService.myReviewList(userDetails, pageable);
     }
 
-    @PatchMapping("/{id:[0-9]+}")
-    public Map<String, Object> myReviewDelete(@PathVariable("id") Long id) {
-        return userReviewService.myReviewDelete(id);
-    }
-
+    // 리뷰 상세 (수정페이지)
     @GetMapping("/{id:[0-9]+}")
     public Map<String, Object> myReviewInfo(@PathVariable("id") Long id) {
         return userReviewService.myReviewInfo(id);
     }
 
+    // 리뷰 수정
     @PutMapping("/{id:[0-9]+}")
     public Map<String, Object> myReviewInfoEdit(@PathVariable("id") Long id,
                                                 @RequestBody Map<String, Object> content) {
         return userReviewService.myReviewInfoEdit(id, content);
     }
 
+    // 리뷰 상세 삭제
     @DeleteMapping("/{id:[0-9]+}")
     public Map<String, Object> myReviewUpdateStatus(@PathVariable("id") Long id) {
         return userReviewService.myReviewDelete(id);

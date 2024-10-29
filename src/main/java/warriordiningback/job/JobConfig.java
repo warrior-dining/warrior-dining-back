@@ -1,5 +1,6 @@
 package warriordiningback.job;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.DuplicateJobException;
@@ -15,37 +16,35 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Configuration
 public class JobConfig extends DefaultBatchConfiguration {
-	
-	@Autowired
-    private JdbcTemplate jdbcTemplate;
-	// jdbcTemplate.execute("CALL temp.UpdateReservationStatus()");
 
-	@Bean
-    public Job testJob(JobRepository jobRepository,PlatformTransactionManager transactionManager) throws DuplicateJobException {
-		return new JobBuilder("testJob",jobRepository)
-               .start(testStep(jobRepository,transactionManager))
-               .build();
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    // jdbcTemplate.execute("CALL temp.UpdateReservationStatus()");
+
+    @Bean
+    public Job testJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws DuplicateJobException {
+        return new JobBuilder("testJob", jobRepository)
+                .start(testStep(jobRepository, transactionManager))
+                .build();
     }
 
-    public Step testStep(JobRepository jobRepository,PlatformTransactionManager transactionManager){
-        Step step = new StepBuilder("testStep",jobRepository)
-                .tasklet(testTasklet(),transactionManager)
+    public Step testStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        Step step = new StepBuilder("testStep", jobRepository)
+                .tasklet(testTasklet(), transactionManager)
                 .build();
         return step;
     }
 
-    public Tasklet testTasklet(){
+    public Tasklet testTasklet() {
         return ((contribution, chunkContext) -> {
-              log.info("***** batch! *****");
-              // 프로시저 호출
-              jdbcTemplate.execute("CALL temp.UpdateReservationStatus()");
-              
-              return RepeatStatus.FINISHED;
+            log.info("***** batch! *****");
+            // 프로시저 호출 ("Call DB명.프로시저명()");
+            jdbcTemplate.execute("CALL temp.UpdateReservationStatus()");
+
+            return RepeatStatus.FINISHED;
         });
     }
 

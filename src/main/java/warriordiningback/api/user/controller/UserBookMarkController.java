@@ -22,14 +22,14 @@ public class UserBookMarkController {
         return userBookMarkService.myBookMarkList(userDetails, pageable);
     }
 
-    @PutMapping
+    @PostMapping
     public Map<String, Object> myBookMarkAdd(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Object> requestBody) {
         return userBookMarkService.myBookMarkAdd(userDetails, requestBody);
     }
 
     @DeleteMapping
     public Map<String, Object> myBookMarkDelete(@AuthenticationPrincipal UserDetails userDetails,
-                                                @RequestParam("placeId") long placeId) {
+                                                @RequestParam("placeId") Long placeId) {
         return userBookMarkService.myBookMarkDelete(userDetails, placeId);
     }
 }

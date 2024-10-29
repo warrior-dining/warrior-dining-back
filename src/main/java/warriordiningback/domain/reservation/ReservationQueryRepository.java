@@ -5,15 +5,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import warriordiningback.api.restaurant.dto.MonthReservationData;
-import warriordiningback.api.restaurant.dto.TopReservationData;
+import warriordiningback.api.place.dto.MonthReservationData;
+import warriordiningback.api.place.dto.TopReservationData;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationQueryRepository extends JpaRepository<Reservation, Long> {
 
-    @Query("SELECT new warriordiningback.api.restaurant.dto.TopReservationData(p.id, p.name, p.comment, " +
+    @Query("SELECT new warriordiningback.api.place.dto.TopReservationData(p.id, p.name, p.comment, " +
             "(SELECT MIN(pf.url) FROM p.placeFiles pf), p.code.id) " +
             "FROM Reservation r " +
             "JOIN r.place p " +
@@ -21,7 +21,7 @@ public interface ReservationQueryRepository extends JpaRepository<Reservation, L
             "ORDER BY COUNT(r) DESC")
     List<TopReservationData> findTop10Places();
 
-    @Query("SELECT new warriordiningback.api.restaurant.dto.MonthReservationData(p.id, p.name, p.comment, " +
+    @Query("SELECT new warriordiningback.api.place.dto.MonthReservationData(p.id, p.name, p.comment, " +
             "(SELECT MIN(pf.url) FROM p.placeFiles pf), r.reservationDate, p.code.id) " +
             "FROM Reservation r " +
             "JOIN r.place p " +

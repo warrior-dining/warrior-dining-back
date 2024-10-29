@@ -1,10 +1,10 @@
-package warriordiningback.api.restaurant.service;
+package warriordiningback.api.place.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import warriordiningback.api.restaurant.dto.PlaceSearchData;
+import warriordiningback.api.place.dto.PlaceSearchData;
 import warriordiningback.domain.place.Place;
 import warriordiningback.domain.place.PlaceFile;
 import warriordiningback.domain.place.PlaceMenu;

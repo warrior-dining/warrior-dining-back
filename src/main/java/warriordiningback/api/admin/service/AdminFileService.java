@@ -30,11 +30,11 @@ public class AdminFileService {
         resultMap.put("state", false);
 
         List<String> list = new ArrayList<>();
-        for(int i = 0; i < files.length; i++) {
-            dto = findByNo(save(files[i],fileComponent.upload2(files[i]), placeInfo, i));
+        for (int i = 0; i < files.length; i++) {
+            dto = findByNo(save(files[i], fileComponent.upload2(files[i]), placeInfo, i));
             list.add(dto.getUrl());
         }
-        if(list.size() > 0) {
+        if (list.size() > 0) {
             resultMap.put("state", true);
             resultMap.put("list", list);
             resultMap.put("comment", "저장 성공");
@@ -42,21 +42,21 @@ public class AdminFileService {
         return resultMap;
     }
 
-    private long save(MultipartFile file, String url, Place placeInfo, int index){
+    private long save(MultipartFile file, String url, Place placeInfo, int index) {
 //        log.info("File Service 왔다.");
-        String viewUrl = "http://localhost:8080/api/admin/places/view?url=";
+        String viewUrl = "http://localhost:8080/api/place/view?url=";
         Map<String, Object> data = new HashMap<>();
         data = fileComponent.setFile(file);
 
-        PlaceFile placeFile= PlaceFile.create( placeInfo, data.get("Name").toString(),
-                        data.get("Extension").toString(), viewUrl + url,
-                        data.get("NewName").toString(), url, data.get("MediaType").toString(), index);
+        PlaceFile placeFile = PlaceFile.create(placeInfo, data.get("Name").toString(),
+                data.get("Extension").toString(), viewUrl + url,
+                data.get("NewName").toString(), url, data.get("MediaType").toString(), index);
         placeFile = placeFileRepository.save(placeFile);
         return placeFile.getId();
     }
 
-    public AdminFileData findByNo(long id){
-        PlaceFile placeFile = placeFileRepository.findById(id).orElseThrow(()-> new RuntimeException("그런 ID 업다."));
+    public AdminFileData findByNo(long id) {
+        PlaceFile placeFile = placeFileRepository.findById(id).orElseThrow(() -> new RuntimeException("그런 ID 업다."));
         AdminFileData adminFileData = AdminFileData.builder().id(placeFile.getId())
                 .name(placeFile.getName())
                 .extension(placeFile.getExtension())
@@ -69,13 +69,13 @@ public class AdminFileService {
         return adminFileData;
     }
 
-    public Map<String, Object> findAll(){
+    public Map<String, Object> findAll() {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("state", false);
 
         List<PlaceFile> list = new ArrayList<>();
         list = placeFileRepository.findAll();
-        if(list.size() > 0) {
+        if (list.size() > 0) {
             resultMap.put("state", true);
             resultMap.put("list", list);
         }

@@ -5,14 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import warriordiningback.api.restaurant.dto.ReviewData;
+import warriordiningback.api.place.dto.ReviewData;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReviewQueryRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT new warriordiningback.api.restaurant.dto.ReviewData(r.id, u.name, r.content, p.name) " +
+    @Query("SELECT new warriordiningback.api.place.dto.ReviewData(r.id, u.name, r.content, p.name) " +
             "FROM Review r " +
             "JOIN r.user u " +
             "JOIN r.place p " +

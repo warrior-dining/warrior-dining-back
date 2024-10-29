@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PutMapping
-    public UserResponse editUserInfo(@RequestBody UserEditRequest userEditRequest,
+    public UserResponse editUserInfo(@Valid @RequestBody UserEditRequest userEditRequest,
                                      @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.editUserInfo(userDetails.getUsername(), userEditRequest.toEntity());
         return UserResponse.of(user);
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping
-    public FindPasswordResponse findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
+    public FindPasswordResponse findPassword(@Valid @RequestBody FindPasswordRequest findPasswordRequest) {
         String newPassword = userService.findPassword(
                 findPasswordRequest.getName(),
                 findPasswordRequest.getBirth(),
